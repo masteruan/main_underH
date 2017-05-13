@@ -1,16 +1,15 @@
 /*
- Simple serial (nessun fine riga)
+ Main sottoterra
+ 13 Maggio 2017
 */
-
+int lang;
 int led = 13; // Pin 13
-
-    char inChar = "";
-    String input;
+String input = "";
+char inChar ;
 
 void setup()
  {
-     pinMode(led, OUTPUT); // Set pin 13 as digital out
-
+    pinMode(led, OUTPUT); // Set pin 13 as digital out
     // Start up serial connection
     Serial.begin(9600); // baud rate
     Serial.flush();
@@ -18,24 +17,24 @@ void setup()
 
 void loop()
 {
-    // Read any serial input
-    while (Serial.available())
-    {
-        //char inChar = (char) Serial.read(); 
-        //input += inChar;
-        if (inChar == '\n') {
-          boolean stringComplete= true;
-        }
-    }
-
-    if (input == "y")
-    {
-        digitalWrite(led, HIGH); // on
-    }
-    if (input == "000")
-    {
-        digitalWrite(led, LOW); // off
-    }
+seriale();
 }
 
-void 
+void seriale() {
+  // Read any serial input
+  while (Serial.available())
+  {
+      inChar = (char)Serial.read(); // Read in one char at a time
+      input += inChar;
+  }
+
+  // test serial
+  if (input == 'o')
+  {
+      digitalWrite(led, HIGH);
+  }
+  else if (input == 'f')
+  {
+      digitalWrite(led, LOW);
+  }
+}
