@@ -5,6 +5,8 @@ Quando parte l'audio?
 
 Quali sono le luci da comandare separatamente?
 
+######################################################
+
 BUTTON
 1.	Scelta della lingua	Italiano / Inglese / Russo
 
