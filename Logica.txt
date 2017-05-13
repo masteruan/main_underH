@@ -1,75 +1,114 @@
+Note:
+Quando si switcha l'audio?
+Quale audio?
+Quando parte l'audio?
 
-1	Scielta della lingua	Italiano / Inglese / Russo
-2	Acendere le luce di casce	Acendere / Spegnere
+Quali sono le luci da comandare separatamente?
 
-4	Valvole	ON
-Girare le valvole fino a finire rumore d’aqcua nella prossima stanza
+BUTTON
+1.	Scelta della lingua	Italiano / Inglese / Russo
 
-Quando le valvole chiudono allora
-1. apertura porta 2
-2. Spegne la tabella «Danger»
-3. Corrente al motore
+BUTTON
+2.	Acendere le luce di tutti i caschi
 
-Quando il motore chiude
-1. Accendi luce
-2. (5 volts al muro	Interutori)
+BUTTON
+3. Power Valvole
+  3 Quando le valvole chiudono
+  3.1 Apertura porta 2
+  3.2 Spegne la tabella «Danger»
+  3.3 Corrente al motore
 
-Quando interruttori mjro chiudono relay
-1. Apri porta 3
+BUTTON
+4. Power motore
+  4. Quando il motore chiude
+  4.1 Accendi luce ???
+  4.2 Corrente al muro (dal motore)
 
-Quando entrano i giocatori cade il monaco
+5. Quando interruttori del muro chiudono
+  5.1 Apertura porta 3
 
-Operatore apre porta 4
+BUTTON
+6. Apertura porta 4
 
-(Un giocatore remane da solo vicino a Croce e operator chiude la porta 4
+BUTTON
+7. Apertura porta 5
 
-?? Apertura porta 5 (per scala)
+BUTTON
+8. Power candele (ON)
 
-Operatore accende le candele nella stanza di bambini
+BUTTON
+9. Power luce sala grande (OFF)
 
-Operatore spegne le luce nella sala principale e sul casco di giocatore alla croce
+BUTTON
+10. Spegnimento caso giocatore solo in stanza grande
 
-??Apertura operatore porta 6 (dalla scala al 2 piano)
+                          ??Apertura operatore porta 6 (dalla scala al 2 piano)
+BUTTON
+11. Power ventilatore + spegne candele
 
-Operatore accende ventilatore e spegne candele
+12. Timone stanza bambini	attiva la Sciura (20 sec)
 
-Timone stanza bambini	il giocatore gira e fa partire la Sciura (20 sec)
+BUTTON
+13. Apertura porta cella
 
-Quando Sciura é arrivata la porta della cella si apre
+BUTTON
+14. Apertura scatola grande con la croce di legno
+15. Quando la croce di legno chiude apre la scatola piccola con la chiave per la sala grande
+16. I giocatori aprono la porta della sala grande con la chiave recuperata
 
-Apre la grande scatola con la croce di legno
+BUTTON
+17. Power cornice
+  17. Quando la cornice	Foto chiude
+  17.1 Dai corrente alla culla
 
-Quando ricevi ok dalla croce di legno
-Apre la piccola scatola piccola (con la chiave)
+BUTTON
+18. Power culla
+  18 Quando mettono una bambola giusta & cullano la culla
+  18.1 bambino smette piangere
+  18.2 power stereo
 
-I giocatori aprono la porta con la chiave	(Porta 5)
+BUTTON
+19. Power stereo
+  19.1 Quando mettono audio cassetta giusta (chiude)
+  19.2 Apertura cella timone
 
-Quando mettono tutti i pezzi della foto nella cornice	Foto
-1. Un bambino piange
+BUTTON
+20. Apertura cella timone grande
 
-Quando mettono una bambola giusta
-&
-mettono audio cassetta giusta
-&
-cullano la culla
+BUTTON
+21. Power gioco timone
 
-Il bambino tace e si apre la cella del timone grande
+22. Quando girano il timone grande
+  22.1 Il simbolo della freccia appare al fianco della porta 8
+  22.2 Quando chiude il relay della scatola del timone
+    22.2.1 Apre porta 8
+    22.2.2 Power orologi
 
-Quando girano il timone grande
-1. Il simbolo della freccia appare al fianco della porta 8
+BUTTON
+23. Apre porta 8
 
-Quando chiude il relay della scatola del timone
-si apre la porta 8
+BUTTON
+24. Power orologi
+  24 Quando sugli orologi si indica 12 teste, 5 coniglio, 7 ucelli
+  24.1 Apertura porta 9 nella stanza di organo
+  24.2 Movimento del Nano dopo 5 sec
+  24.3 Power organo
+  24.4 Suona organo
 
+BUTTON
+25. Power organo
 
-Quando sugli orologi si indica 12 teste, 5 coniglio, 7 ucelli
-1. Apertura porta 9 nella stanza di organo
-2. Movimento di Nano	Dopo 5 sec
-3. Suona organo
+BUTTON
+26. Play organo
 
-(Sciacci i mantice a fianco e l’organo suona!)
+27. Pulsanti organo
+  27. Quando i giocatori rispondono (43423122) ai pulsanti di organo (chiude)
+  27.1 Si accende la Luce finale
+  27.2 Corrente alla mano
+  27.3 Stop gioco
 
-Quando i giocatori rispondono (43423122) ai pulsanti di organo
-1. Si accende la Luce finale
-2. Corrente all amano
-3. Stop gioco
+BUTTON
+28. Power mano
+
+BUTTON
+29. Power Luce finale
