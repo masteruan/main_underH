@@ -26,6 +26,10 @@ audio
 ralay1 4  --  relay3 3
 relay2 5  --  relay4 2
 
+RELAY 220 V
+luci
+luce_terzo 11|luce_quarto 12 -- luce_secondo 10|luce_primo 9
+
 INPUT
 Timone A11  --  Libero A10
 Organo A9   --  Orologi A8
@@ -66,10 +70,12 @@ int games[] = {A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11};
 int in_valvole = A0;
 boolean sign_valvole = true;
 boolean read_valvole = false;
+boolean OK_valvole = false;
 
 int in_motore = A1;
 boolean sign_motore = true;
 boolean read_motore = false;
+boolean OK_motore = false;
 
 int in_interruttori = A3;
 boolean sign_interuttori = true;
@@ -129,11 +135,15 @@ int ventilatore = 35;
 int orologi = 36;
 int organo = 37;
 int pulsanti = 38;
-int organo_start = 39;
-int nano = 40;
-// 220 volts
-int luce_gen = 41;
-int luce_gran = 42;
+int nano = 39;
+int organo_start = 40;
+int libero1 = 41;
+int libero2 = 42;
+// luci 220 volts
+int luce_primo = 9;
+int luce_secondo = 10;
+int luce_terzo = 11;
+int luce_quarto = 12;
 // elettrocalamite
 int M1 = 43;
 int M2 = 44;
@@ -150,14 +160,16 @@ int libero = 53;
 void setup()
  {
    // OUTPUT
-   for (int i = 29; i < 54; i++){
+   for (int i = 22; i < 54; i++){
      pinMode(i,OUTPUT);
    }
    for (int i = 2; i < 6; i++){
-     pinMode(i,OUTPUT);
+     pinMode(i, OUTPUT);
    }
     pinMode(led, OUTPUT); // Set pin 13 as digital out
-
+  for (int i = 9; i < 14; i++){
+    pinMode(i, OUTPUT);
+  }
     // INPUT
     // This input give FALSE if the input is open TRUE if the input is closed
     for (int i = 0; i < 13; i++){
@@ -177,6 +189,7 @@ void setup()
       //while(true);
     }
     myDFPlayer.volume (20);
+    Serial.println("################");
     Serial.println("You are Welcome!");
 }
 
@@ -188,8 +201,7 @@ void loop()
     input = "";
     stringComplete = false;
   }
-  
-//game();
+game();
 //lettura();
 
 }
@@ -197,35 +209,50 @@ void loop()
 void game () {
 
   if (start_game){
+    
+    // reset booleane
+    read_valvole = false;
+    OK_valvole = false;
+    read_motore = false;
+    OK_motore = false;
+    
     // chiudi tutte le elettrocalamite
     digitalWrite(M1, HIGH);
     digitalWrite(M2, HIGH);
+    delay(10);
     digitalWrite(M3, HIGH);
     digitalWrite(M4, HIGH);
+    delay(10);
     digitalWrite(M5, HIGH);
     digitalWrite(M6, HIGH);
+    delay(10);
     digitalWrite(M7, HIGH);
     digitalWrite(M8, HIGH);
+    delay(10);
     digitalWrite(M9, HIGH);
     digitalWrite(M10, HIGH);
     // accendi
-    digitalWrite(candele, HIGH);
+    digitalWrite(valvole, LOW);
     digitalWrite(valvole, HIGH);
-    digitalWrite(danger, HIGH);
-    digitalWrite(luce_gen, HIGH);
-    digitalWrite(luce_gran, HIGH);
+    delay(10);
+    digitalWrite(motore, LOW);
+    digitalWrite(danger, LOW);
     start_game = false;
   }
   sign_valvole = digitalRead(in_valvole);
-  if (!sign_valvole){
-    digitalWrite(danger, LOW); // switch off "DANGER"
+  if (!sign_valvole && !OK_valvole){
+    digitalWrite(danger, HIGH); // switch off "DANGER"
+    
     digitalWrite(motore, HIGH); // switch on motor
+    
     digitalWrite(M1, LOW); // open the door
+    OK_valvole = true;
   }
-
+  delay(10);
   sign_motore = digitalRead(in_motore);
-  if (!sign_motore){
+  if (!sign_motore && !OK_motore){
     digitalWrite(M2, LOW); // open the door
+    OK_motore = true;
   }
 
   // if the players are on the second floor
@@ -238,13 +265,14 @@ void game () {
     digitalWrite(culla, HIGH);
     second_floor = false;
   }
-
+/*
   sign_start = digitalRead(in_start);
   if (!read_start && !sign_start){
     start_game = true;
     read_start = true;
     sign_start = true;
   }
+  */
 }
 
 void lettura() {
@@ -262,7 +290,7 @@ void lettura() {
 }
 
 void serialEvent() {
-  
+
   // Read any serial input
   while (Serial.available())
   {
@@ -274,223 +302,246 @@ void serialEvent() {
   }
 }
   void seriale() {
-    //Serial.print("Seriale inizio: ");
-    //Serial.println(input);
-  if (input == "A"){
-    digitalWrite(valvole,HIGH);
+  if (input[0] == 'A'){
+    digitalWrite(valvole, HIGH);
     Serial.println("Valve ON");
   }
-  if (input == "a"){
-    digitalWrite(valvole,LOW);
+  if (input[0] == 'a'){
+    digitalWrite(valvole, LOW);
     Serial.println("Valve OFF");
   }
 
-  if (input == 'B'){
+  if (input[0] == 'B'){
     digitalWrite(danger,HIGH);
   }
-  if (input == 'b'){
+  if (input[0] == 'b'){
     digitalWrite(danger,LOW);
   }
 
-  if (input == 'C'){
+  if (input[0] == 'C'){
     digitalWrite(danger, HIGH);
   }
-  if (input == 'c'){
+  if (input[0] == 'c'){
     digitalWrite(danger,LOW);
   }
 
-  if (input == 'D'){
+  if (input[0] == 'D'){
     digitalWrite(motore, HIGH);
   }
-  if (input == 'd'){
+  if (input[0] == 'd'){
     digitalWrite(motore, LOW);
   }
 
-  if (input == 'E'){
+  if (input[0] == 'E'){
     digitalWrite(croce, HIGH);
   }
-  if (input == 'e'){
+  if (input[0] == 'e'){
     digitalWrite(croce, LOW);
   }
 
-  if (input == 'F'){
+  if (input[0] == 'F'){
     digitalWrite(monaco, HIGH);
   }
-  if (input == 'f'){
+  if (input[0] == 'f'){
     digitalWrite(monaco, LOW);
   }
 
-  if (input == 'G'){
+  if (input[0] == 'G'){
     digitalWrite(timone, HIGH);
   }
-  if (input == 'g'){
+  if (input[0] == 'g'){
     digitalWrite(timone, LOW);
   }
 
-  if (input == 'H'){
+  if (input[0] == 'H'){
     digitalWrite(candele, HIGH);
   }
-  if (input == 'h'){
+  if (input[0] == 'h'){
     digitalWrite(candele, LOW);
   }
 
-  if (input == 'I'){
+  if (input[0] == 'I'){
     digitalWrite(culla, HIGH);
   }
-  if (input == 'i'){
+  if (input[0] == 'i'){
     digitalWrite(culla, LOW);
   }
 
-  if (input == 'J'){
+  if (input[0] == 'J'){
     digitalWrite(culla_start, HIGH);
   }
-  if (input == 'j'){
+  if (input[0] == 'j'){
     digitalWrite(culla_start, LOW);
   }
 
-  if (input == 'K'){
+  if (input[0] == 'K'){
     digitalWrite(foto, HIGH);
   }
-  if (input == 'k'){
+  if (input[0] == 'k'){
     digitalWrite(foto, LOW);
   }
 
-  if (input == 'L'){
+  if (input[0] == 'L'){
     digitalWrite(stereo, HIGH);
   }
-  if (input == 'l'){
+  if (input[0] == 'l'){
     digitalWrite(stereo, LOW);
   }
 
-  if (input == 'M'){
+  if (input[0] == 'M'){
     digitalWrite(ventilatore, HIGH);
   }
-  if (input == 'm'){
+  if (input[0] == 'm'){
     digitalWrite(ventilatore, LOW);
   }
 
-  if (input == 'O'){
+  if (input[0] == 'O'){
     digitalWrite(orologi, HIGH);
   }
-  if (input == 'o'){
+  if (input[0] == 'o'){
     digitalWrite(orologi, LOW);
   }
 
-  if (input == 'P'){
+  if (input[0] == 'P'){
     digitalWrite(organo, HIGH);
   }
-  if (input == 'p'){
+  if (input[0] == 'p'){
     digitalWrite(organo, LOW);
   }
 
-  if (input == 'Q'){
+  if (input[0] == 'Q'){
     digitalWrite(pulsanti, HIGH);
   }
-  if (input == 'q'){
+  if (input[0] == 'q'){
     digitalWrite(pulsanti, LOW);
   }
 
-  if (input == 'R'){
+  if (input[0] == 'R'){
     digitalWrite(nano, HIGH);
   }
-  if (input == 'r'){
+  if (input[0] == 'r'){
     digitalWrite(nano, LOW);
   }
 
-  if (input == 'S'){
+  if (input[0] == 'S'){
     digitalWrite(organo_start, HIGH);
   }
-  if (input == 's'){
+  if (input[0] == 's'){
     digitalWrite(organo_start, LOW);
   }
 
-  if (input == 'Y'){
-    digitalWrite(luce_gen, HIGH);
+  if (input[0] == 'Y'){
+    digitalWrite(libero1, HIGH);
   }
-  if (input == 'y'){
-    digitalWrite(luce_gen, LOW);
-  }
-
-  if (input == 'Z'){
-    digitalWrite(luce_gran, HIGH);
-  }
-  if (input == 'z'){
-    digitalWrite(luce_gran, LOW);
+  if (input[0] == 'y'){
+    digitalWrite(libero1, LOW);
   }
 
+  if (input[0] == 'Z'){
+    digitalWrite(libero2, HIGH);
+  }
+  if (input[0] == 'z'){
+    digitalWrite(libero2, LOW);
+  }
+
+  // luci
+  if (input == "#A\n"){
+    digitalWrite(luce_primo, HIGH);
+  }
+  if (input == "#a\n"){
+    digitalWrite(luce_primo, LOW);
+  }
+  if (input == "#B\n"){
+    digitalWrite(luce_secondo, HIGH);
+  }
+  if (input == "#b\n"){
+    digitalWrite(luce_secondo, LOW);
+  }
+  if (input == "#C\n"){
+    digitalWrite(luce_terzo, HIGH);
+  }
+  if (input == "#c\n"){
+    digitalWrite(luce_terzo, LOW);
+  }
+  if (input == "#D\n"){
+    digitalWrite(luce_quarto, HIGH);
+  }
+  if (input == "#d\n"){
+    digitalWrite(luce_quarto, LOW);
+  }
   // electromagnets
-  if (input == '!') {
+  if (input[0] == '!') {
     digitalWrite(M1, HIGH);
   }
-  if (input == '1') {
+  if (input[0] == '1') {
     digitalWrite(M1, LOW);
   }
 
-  if (input == '@') {
+  if (input[0] == '@') {
     digitalWrite(M2, HIGH);
   }
-  if (input == '2') {
+  if (input[0] == '2') {
     digitalWrite(M2, LOW);
   }
 
-  if (input == '#') {
+  if (input[0] == '£') {
     digitalWrite(M3, HIGH);
   }
-  if (input == '3') {
+  if (input[0] == '3') {
     digitalWrite(M3, LOW);
   }
 
-  if (input == '$') {
+  if (input[0] == '$') {
     digitalWrite(M4, HIGH);
   }
-  if (input == '4') {
+  if (input[0] == '4') {
     digitalWrite(M4, LOW);
   }
 
-  if (input == '%') {
+  if (input[0] == '%') {
     digitalWrite(M5, HIGH);
   }
-  if (input == '5') {
+  if (input[0] == '5') {
     digitalWrite(M5, LOW);
   }
 
-  if (input == '^') {
+  if (input[0] == '^') {
     digitalWrite(M6, HIGH);
   }
-  if (input == '6') {
+  if (input[0] == '6') {
     digitalWrite(M6, LOW);
   }
 
-  if (input == '&') {
+  if (input[0] == '&') {
     digitalWrite(M7, HIGH);
   }
-  if (input == '7') {
+  if (input[0] == '7') {
     digitalWrite(M7, LOW);
   }
 
-  if (input == '*') {
+  if (input[0] == '*') {
     digitalWrite(M8, HIGH);
   }
-  if (input == '8') {
+  if (input[0] == '8') {
     digitalWrite(M8, LOW);
   }
 
-  if (input == '(') {
+  if (input[0] == '(') {
     digitalWrite(M9, HIGH);
   }
-  if (input == '9') {
+  if (input[0] == '9') {
     digitalWrite(M9, LOW);
   }
 
-  if (input == ')') {
+  if (input[0] == ')') {
     digitalWrite(M10, HIGH);
   }
-  if (input == '0'){
+  if (input[0] == '0'){
     digitalWrite(M10, LOW);
   }
 
   // animations
-  if (input == 'N')
+  if (input[0] == "_vent/n")
   {
     digitalWrite(ventilatore, HIGH);
     delay(5000);
@@ -500,20 +551,18 @@ void serialEvent() {
   }
 
   // start
-  if (input == 'start_game'){
+  if (input == "_startGame\n" && !start_game){
       start_game = true;
+      Serial.println("Start Game");
   }
 
   // test serial
-  if (input == 'test_on')
+  if (input == "_test_on\n")
   {
-      digitalWrite(led, HIGH);
+      for (int i = 0; i < 10; i++) {
+        digitalWrite(led, HIGH);
+        delay(100);
+        digitalWrite(led, LOW);
+      }
   }
-  else if (input == 'test_off')
-  {
-      digitalWrite(led, LOW);
-  }
-
-    Serial.print("Seriale fine: ");
-    Serial.println(input);
 }
