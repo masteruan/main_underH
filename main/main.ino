@@ -187,7 +187,7 @@ lettura();
 void game () {
 
   if (start_game){
-    // chiudi elettrocalamite
+    // chiudi tutte le elettrocalamite
     digitalWrite(M1, HIGH);
     digitalWrite(M2, HIGH);
     digitalWrite(M3, HIGH);
