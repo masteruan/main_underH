@@ -50,12 +50,15 @@ DFRobotDFPlayerMini myDFPlayer;
 // Variables
 int lang;
 int led = 13; // Pin 13
-String input = "";
-char inChar ;
 
 // switch
 boolean start_game = false;
-booloena second_floor = false;
+boolean second_floor = false;
+
+// serial
+boolean stringComplete = false;
+String input = ""; //String
+char inChar ;
 
 // input Variables
 int games[] = {A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11};
@@ -74,7 +77,7 @@ boolean read_interruttori = false;
 
 int in_croce = A2;
 boolean sign_croce = true;
-boolean read_interruttori = false;
+boolean read_croce = false;
 
 int in_start = A4;
 boolean sign_start = true;
@@ -162,25 +165,32 @@ void setup()
     }
 
     // Start up serial connection
-    mySoftwareSerial.begin(9600);
-    Serial.begin(115200);
-    Serial.flush();
+    mySoftwareSerial.begin(115200); //default 9600
+    Serial.begin(9600); //default 115200
+    input.reserve(200);
 
     // Start mp3 player
     if (!myDFPlayer.begin(mySoftwareSerial)) {  //Use softwareSerial to communicate with mp3.
       Serial.println(F("Unable to begin:"));
       Serial.println(F("1.Please recheck the connection!"));
       Serial.println(F("2.Please insert the SD card!"));
-      while(true);
+      //while(true);
     }
     myDFPlayer.volume (20);
+    Serial.println("You are Welcome!");
 }
 
 void loop()
 {
-seriale();
-game();
-lettura();
+  if (stringComplete) {
+    //Serial.println(input);
+    seriale();
+    input = "";
+    stringComplete = false;
+  }
+  
+//game();
+//lettura();
 
 }
 
@@ -224,7 +234,7 @@ void game () {
     delay(5000);
     digitalWrite(candele, LOW);
     digitalWrite(ventilatore,LOW);
-    digitalWrite(stereo, HIGH;)
+    digitalWrite(stereo, HIGH);
     digitalWrite(culla, HIGH);
     second_floor = false;
   }
@@ -251,20 +261,28 @@ void lettura() {
 
 }
 
-void seriale() {
+void serialEvent() {
+  
   // Read any serial input
   while (Serial.available())
   {
       inChar = (char)Serial.read(); // Read in one char at a time
       input += inChar;
+      if (inChar == '\n') {
+        stringComplete = true;
+      }
   }
-
-  // games
-  if (input == 'A'){
+}
+  void seriale() {
+    //Serial.print("Seriale inizio: ");
+    //Serial.println(input);
+  if (input == "A"){
     digitalWrite(valvole,HIGH);
+    Serial.println("Valve ON");
   }
-  if (input == 'a'){
+  if (input == "a"){
     digitalWrite(valvole,LOW);
+    Serial.println("Valve OFF");
   }
 
   if (input == 'B'){
@@ -495,4 +513,7 @@ void seriale() {
   {
       digitalWrite(led, LOW);
   }
+
+    Serial.print("Seriale fine: ");
+    Serial.println(input);
 }
