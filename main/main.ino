@@ -1,16 +1,16 @@
 /*
  Main sottoterra
- 15 Maggio 2017
+ 29 Maggio 2017
 
 OUTPUT
 Candele 29 -- M4  46
 Timone 28  -- M5  47
 Monaco 27  -- M6  48
-Croce 26   -- M7  49
+Croce 35   -- M7  49
 Motore 25  -- M8  50
 Mano 24    -- M9  51
 Danger 23  -- M10 52
-Valvole 22 -- Libero 53
+Valvole 22 -- M11 53
 --         --
 Organo 37         --  Pulsanti  38
 Orologi 36        --  Organo play 39
@@ -65,6 +65,7 @@ int led = 13; // Pin 13
 boolean start_game = false;
 boolean second_floor = false;
 boolean preparation = false;
+boolean scatolaGrande = false;
 
 // serial
 boolean stringComplete = false;
@@ -85,14 +86,14 @@ boolean read_motore = false;
 boolean OK_motore = false;
 
 int in_interruttori = A3;
-boolean sign_interuttori = true;
+boolean sign_interruttori = true;
 boolean read_interruttori = false;
 boolean OK_interruttori = false;
 
 int in_croce = A2;
 boolean sign_croce = true;
 boolean read_croce = false;
-OK_croce = false;
+boolean OK_croce = false;
 
 int in_start = A4;
 boolean sign_start = true;
@@ -122,24 +123,24 @@ boolean OK_orologi = false;
 int in_organo = A9;
 boolean sign_organo = true;
 boolean read_organo = false;
-OK_organo = false;
+boolean OK_organo = false;
 
 int in_libero = A10;
 boolean sign_libero = true;
 boolean read_libero = false;
-OK_libero = false;
+boolean OK_libero = false;
 
 int in_timone = A11;
 boolean sign_timone = true;
 boolean read_timone = false;
-OK_timone = false;
+boolean OK_timone = false;
 
 // output variabili
 int valvole = 22;
 int danger = 23;
 int mano = 24;
 int motore = 25;
-int croce = 26;
+int croce = 35; //default 26
 int monaco = 27;
 int timone = 28;
 int candele = 29;
@@ -147,8 +148,10 @@ int culla = 30;
 int culla_start = 31;
 int foto = 32;
 int stereo = 33;
-int timone_segnale = 34;
-int ventilatore = 35;
+
+//int timone_segnale = 34;
+int ventilatore = 34;
+
 int orologi = 36;
 int organo = 37;
 int pulsanti = 38;
@@ -172,10 +175,11 @@ int M7 = 49;
 int M8 = 50;
 int M9 = 51;
 int M10 = 52;
-int libero = 53;
+int M11 = 53;
 
 void setup()
  {
+   Serial.flush();
    // OUTPUT
    for (int i = 22; i < 54; i++){
      pinMode(i,OUTPUT);
@@ -234,9 +238,25 @@ void game () {
     OK_valvole = false;
     read_motore = false;
     OK_motore = false;
-
+    read_interruttori = false;
+    OK_interruttori = false;
+    read_croce = false;
+    OK_croce = false;
+    read_foto = false;
+    OK_foto = false;
+    read_stereo = false;
+    OK_stereo = false;
+    read_culla = false;
+    OK_culla = false;
+    read_orologi = false;
+    OK_orologi = false;
+    read_organo = false;
+    OK_organo = false;
+    read_timone = false;
+    OK_timone = false;
+    
     // chiudi tutte le elettrocalamite
-    /*digitalWrite(M1, HIGH);
+    digitalWrite(M1, HIGH);
     digitalWrite(M2, HIGH);
     delay(10);
     digitalWrite(M3, HIGH);
@@ -245,12 +265,14 @@ void game () {
     digitalWrite(M5, HIGH);
     digitalWrite(M6, HIGH);
     delay(10);
-    digitalWrite(M7, HIGH);
+    digitalWrite(M7, LOW);
     digitalWrite(M8, HIGH);
     delay(10);
     digitalWrite(M9, HIGH);
     digitalWrite(M10, HIGH);
-    */
+    delay(10);
+    digitalWrite(M11, HIGH);
+    
     // accendi i primi giochi
     digitalWrite(valvole, LOW);
     digitalWrite(valvole, HIGH);
@@ -272,49 +294,75 @@ void game () {
   sign_motore = digitalRead(in_motore);
   if (!sign_motore && !OK_motore){
     digitalWrite(M2, LOW); // open the door
+    delay(3000);
+    digitalWrite(M6, HIGH);
+    delay(100);
+    digitalWrite(M11, LOW);
     OK_motore = true;
   }
 
   // if the players are on the second floor
   if (second_floor){
-    digitalWrite(ventilatore, HIGH);
+    digitalWrite(M11, HIGH);
+    delay(8000);
+    digitalWrite(M6, LOW);
+    delay(2000);
+    digitalWrite(M6,HIGH);
+    delay(20);
+    digitalWrite(M4, LOW); 
+    delay(20);
+    digitalWrite(candele, HIGH);
     delay(5000);
+    digitalWrite(ventilatore, HIGH);
+    delay(8000);
     digitalWrite(candele, LOW);
+    delay(20);
     digitalWrite(ventilatore,LOW);
-    delay(10000);
-    digitalWrite(stereo, HIGH);
     second_floor = false;
   }
-
+  
+  // waiting for operator unlock the BIG BOX
+  sign_croce = digitalRead(in_croce);
+  if (!sign_croce && !OK_croce){
+    digitalWrite(M7, HIGH); //sblocca scatola piccola
+    delay(2000);
+    digitalWrite(M7, LOW);
+    delay(200);
+    digitalWrite(M4, LOW);
+    delay(20);
+    digitalWrite(M11, LOW);
+    delay(20);
+    digitalWrite(foto, HIGH);
+    OK_croce = true;
+  }
+  
+  sign_foto = digitalRead(in_foto);
+  if (!sign_foto && !OK_foto){
+    digitalWrite(stereo, HIGH);
+    delay(3000);
+    digitalWrite(culla, HIGH); // accende la culla
+    delay(20);
+    OK_foto = true;
+  }
+  
   sign_stereo = digitalRead(in_stereo);
   if (!sign_stereo && !OK_stereo){
-    digitalWrite(culla, HIGH);
-    delay(50);
+    digitalWrite(culla, LOW);
+    delay(4000);
+    digitalWrite(stereo, LOW);
     OK_stereo = true;
+    delay(3000);
+    digitalWrite(culla, HIGH);
   }
-
+  
   sign_culla = digitalRead(in_culla);
   if (!sign_culla && !OK_culla){
-    digitalWrite(M8, LOW); // sblocca scatola piccola
+    digitalWrite(M10, LOW); // sblocca cella timone
     delay(50);
     digitalWrite(croce, HIGH);
     OK_culla = true;
   }
-
-  sign_croce = digitalRead(in_croce);
-  if (!sign_croce && !OK_croce){
-    digitalWrite(M9, HIGH); //sblocca scatola piccola
-    delay(50);
-    //sblocca la porta sulle scale
-    OK_croce = true;
-  }
-
-  sign_foto = digitalRead(in_foto);
-  if (!sign_foto && !OK_foto){
-    digitalWrite(M7, LOW); // sblocca la porta del timone
-    OK_foto = true;
-  }
-
+  
   sign_timone = digitalRead(in_timone);
   if (!sign_timone && !OK_timone) {
     digitalWrite(M6, LOW); //sblocca la porta per gli orologi
@@ -333,9 +381,9 @@ void game () {
     OK_timone = true;
   }
 
-  sign_organo = digitalWrite(in_organo);
+  sign_organo = digitalRead(in_organo);
   if (!sign_organo) {
-    digitalWrite(relay2, HIGH); // accendi la luce finale
+    digitalWrite(luce_primo, HIGH); // accendi la luce finale
     delay(15000);
     digitalWrite(mano, HIGH);
   }
@@ -369,7 +417,7 @@ void lettura() {
   delay(10);
   sign_stereo = digitalRead(in_stereo);
   delay(10);
-  sign_interuttori = digitalRead(in_interruttori);
+  sign_interruttori = digitalRead(in_interruttori);
 
   if (!sign_valvole){
     Serial.println("valvole risolte");
@@ -405,7 +453,9 @@ void lettura() {
 }
 
 void serialEvent() {
-
+  Serial.flush();
+  //Serial.begin(9600);
+  delay(20);
   // Read any serial input
   while (Serial.available())
   {
@@ -672,7 +722,12 @@ void serialEvent() {
   if (input[0] == '0'){
     digitalWrite(M10, LOW);
   }
-
+  if (input[0] == 'N'){
+    digitalWrite(M11, HIGH);
+  }
+  if (input[0] == 'n'){
+    digitalWrite(M11, LOW);
+  }
   // animations
   if (input == "_vent\n")
   {
@@ -701,7 +756,14 @@ void serialEvent() {
     second_floor = true;
     Serial.println("Gamers on second floors!");
   }
-
+  // scatola grande
+  if (input == "_scatolaGrande\n" && !scatolaGrande){
+    scatolaGrande = true;
+    digitalWrite(M8, LOW);
+    delay(20);
+    digitalWrite(croce, HIGH);
+    Serial.println("The big box opened!");
+  }
   // preparation
   //(remember the big box that have the "scrocco" not electromagnets)
   if (input == "_preparation\n" && !preparation){
@@ -714,7 +776,7 @@ void serialEvent() {
     digitalWrite(M4, HIGH);
     digitalWrite(M5, HIGH);
     digitalWrite(M6, HIGH);
-    digitalWrite(M7, HIGH);
+    digitalWrite(M7, LOW);
     digitalWrite(M8, HIGH);
     digitalWrite(M9, HIGH);
     digitalWrite(M10, HIGH);
@@ -737,10 +799,13 @@ void serialEvent() {
     digitalWrite(M4, LOW);
     digitalWrite(M5, LOW);
     digitalWrite(M6, LOW);
+    digitalWrite(M7, HIGH);
+    delay(100);
     digitalWrite(M7, LOW);
     digitalWrite(M8, LOW);
     digitalWrite(M9, LOW);
     digitalWrite(M10, LOW);
+    digitalWrite(M11, LOW);
     // switch on all the lights
     digitalWrite(luce_primo, HIGH);
     delay(200);
@@ -750,9 +815,18 @@ void serialEvent() {
     delay(200);
     digitalWrite(luce_quarto, HIGH);
   }
-
+  // All ON
+  if (input == "_allON\n");
+    for (int i = 22; i < 54; i++){
+      digitalWrite(i, HIGH);
+      Serial.print("Accensione pin: ");
+      Serial.println(i);
+      delay(1000);
+    }
+    
   // lettura giochi
   if (input == "_lettura\n"){
+    Serial.println("\nLettura input");
     lettura();
   }
 
