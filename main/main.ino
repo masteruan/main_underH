@@ -1,7 +1,6 @@
 /*
  Main sottoterra
  2 Giugno 2017
-
 OUTPUT
 Candele 29 -- M4  46
 Timone 28  -- M5  47
@@ -25,12 +24,10 @@ RELAY PICCOLI
 audio
 ralay1 4  --  relay3 3
 relay2 5  --  relay4 2
-
 RELAY 220 V
 luci
 luce_terzo 11(Sala Grande)|luce_quarto 12(Ingresso)
 luce_secondo 10(Uscita)|luce_primo 9(primo piano)
-
 INPUT
 Timone A11  --  Libero A10
 Organo A9   --  Orologi A8
@@ -38,8 +35,6 @@ Culla A7    --  Stereo A6
 Foto A5     --  Start A4
 Croce A2    --  Interruttori A3
 Motore A1   --  Valvole A0
-
-
 Instructions
 Send to serial
 "_preparation" to close all the doors and switch on all the lights
@@ -47,8 +42,6 @@ Send to serial
 "_secondFloor" to switch on the second floor
 "_vent" for the animation of ventilator
 "_nano" for the animation of dwarf
-
-
 */
 
 // Libraries
@@ -80,69 +73,55 @@ int games[] = {A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11};
 
 int in_valvole = A0;
 boolean sign_valvole = true;
-boolean read_valvole = false;
 boolean OK_valvole = false;
 
 int in_generatore = A10;
 boolean sign_generatore = false;
-boolean read_generatore = false;
 boolean OK_generatore = false;
 
 int in_motore = A1;
 boolean sign_motore = true;
-boolean read_motore = false;
 boolean OK_motore = false;
 
 int in_interruttori = A3;
 boolean sign_interruttori = true;
-boolean read_interruttori = false;
 boolean OK_interruttori = false;
 
 int in_croce = A2;
 boolean sign_croce = true;
-boolean read_croce = false;
 boolean OK_croce = false;
 
 int in_start = A4;
 boolean sign_start = true;
-boolean read_start = false;
 boolean OK_start = false;
 
 int in_foto = A5;
 boolean sign_foto = true;
-boolean read_foto = false;
 boolean OK_foto = false;
 
 int in_stereo = A6;
 boolean sign_stereo = true;
-boolean read_stereo = false;
 boolean OK_stereo = false;
 
 int in_culla = A7;
 boolean sign_culla = true;
-boolean read_culla = false;
 boolean OK_culla = false;
 
 int in_orologi = A8;
 boolean sign_orologi = true;
-boolean read_orologi = false;
 boolean OK_orologi = false;
 
 int in_organo = A9;
 boolean sign_organo = true;
-boolean read_organo = false;
 boolean OK_organo = false;
 
 int in_libero = A10;
 boolean sign_libero = true;
-boolean read_libero = false;
 boolean OK_libero = false;
 
 int in_timone = A11;
 boolean sign_timone = true;
-boolean read_timone = false;
 boolean OK_timone = false;
-
 // output variabili
 int valvole = 22;
 int danger = 23;
@@ -184,19 +163,61 @@ int M8 = 50;
 int M9 = 51;
 int M10 = 52;
 int M11 = 53;
+typedef struct {
+  String str;
+  int pin;
+} output;
+output outputs[35]={ 
+  {"valvole", valvole},
+  {"danger", danger},
+  {"mano", mano},
+  {"motore", motore},
+  {"croce", croce}, //default 26
+  {"monaco", monaco},
+  {"timone", timone},
+  {"candele", candele},
+  {"culla", culla},
+  {"culla_start", culla_start},
+  {"foto", foto},
+  {"stereo", stereo},
+  //{"timone_segnale", 34},
+  {"ventilatore", ventilatore},
+  {"orologi", orologi},
+  {"organo", organo},
+  {"pulsanti", pulsanti},
+  {"nano", nano},
+  {"organo_start", organo_start},
+  {"libero1", libero1},
+  {"libero2", libero2},
+  // luci 220 volts
+  {"luce_primo", luce_primo},
+  {"luce_secondo", luce_secondo},
+  {"luce_terzo", luce_terzo},
+  {"luce_quarto", luce_quarto},
+  // elettrocalamite
+  {"M1", M1},
+  {"M2", M2},
+  {"M3", M3},
+  {"M4", M4},
+  {"M5", M5},
+  {"M6", M6},
+  {"M7", M7},
+  {"M8", M8},
+  {"M9", M9},
+  {"M10", M10},
+  {"M11", M11}
+};
 
 
-
-void setup()
- {
-   Serial.flush();
-   // OUTPUT
-   for (int i = 22; i < 54; i++){
-     pinMode(i,OUTPUT);
-   }
-   for (int i = 2; i < 6; i++){
-     pinMode(i, OUTPUT);
-   }
+void setup() {
+  Serial.flush();
+  // OUTPUT
+  for (int i = 22; i < 54; i++){
+    pinMode(i,OUTPUT);
+  }
+  for (int i = 2; i < 6; i++){
+    pinMode(i, OUTPUT);
+  }
     pinMode(led, OUTPUT); // Set pin 13 as digital out
   for (int i = 9; i < 14; i++){
     pinMode(i, OUTPUT);
@@ -226,45 +247,33 @@ void setup()
     Serial.println("You are Welcome!");
 }
 
-void loop()
-{
+void loop() {
   if (stringComplete) {
     //Serial.println(input);
     seriale();
     input = "";
     stringComplete = false;
   }
-game();
-//lettura();
+  game();
+  //lettura();
 
 }
 
 void game () {
-
   if (start_game){
 
     // reset booleane
-    read_valvole = false;
     OK_valvole = false;
-    read_motore = false;
     OK_motore = false;
     OK_generatore = false;
-    read_interruttori = false;
     OK_interruttori = false;
-    read_croce = false;
     OK_secondFloor = false;
     OK_croce = false;
-    read_foto = false;
     OK_foto = false;
-    read_stereo = false;
     OK_stereo = false;
-    read_culla = false;
     OK_culla = false;
-    read_orologi = false;
     OK_orologi = false;
-    read_organo = false;
     OK_organo = false;
-    read_timone = false;
     OK_timone = false;
     
     // chiudi tutte le elettrocalamite
@@ -292,9 +301,7 @@ void game () {
   sign_valvole = digitalRead(in_valvole);
   if (!sign_valvole && !OK_valvole){
     digitalWrite(danger, HIGH); // switch off "DANGER"
-
     digitalWrite(motore, HIGH); // switch on motor
-
     digitalWrite(M1, LOW); // open the door
     OK_valvole = true;
   }
@@ -404,9 +411,9 @@ void game () {
     digitalWrite(pulsanti, HIGH);
     OK_orologi = true;
   }
-  //if(OK_orologi){
+  if(OK_orologi){
     sign_organo = digitalRead(in_interruttori);
-  //}
+  }
   if (!sign_organo && !OK_organo) {
     digitalWrite(nano,LOW);
     digitalWrite(luce_primo,LOW);
@@ -495,383 +502,133 @@ void serialEvent() {
   // Read any serial input
   while (Serial.available())
   {
-      inChar = (char)Serial.read(); // Read in one char at a time
-      input += inChar;
-      if (inChar == '\n') {
-        stringComplete = true;
-      }
+    inChar = (char)Serial.read(); // Read in one char at a time
+    input += inChar;
+    if (inChar == '\n') {
+      stringComplete = true;
+    }
   }
 }
-  void seriale() {
-  if (input[0] == 'A'){
-    digitalWrite(valvole, HIGH);
-  }
-
-  else if (input[0] == 'a'){
-    digitalWrite(valvole, LOW);
-  }
-
-  else if (input[0] == 'B'){
-    digitalWrite(danger,HIGH);
-  }
-
-  else if (input[0] == 'b'){
-    digitalWrite(danger,LOW);
-  }
-
-  else if (input[0] == 'C'){
-    digitalWrite(danger, HIGH);
-  }
-
-  else if (input[0] == 'c'){
-    digitalWrite(danger,LOW);
-  }
-
-  else if (input[0] == 'D'){
-    digitalWrite(motore, HIGH);
-  }
-
-  else if (input[0] == 'd'){
-    digitalWrite(motore, LOW);
-  }
-
-  else if (input[0] == 'E'){
-    digitalWrite(croce, HIGH);
-  }
-
-  else if (input[0] == 'e'){
-    digitalWrite(croce, LOW);
-  }
-
-  else if (input[0] == 'F'){
-    digitalWrite(monaco, HIGH);
-  }
-
-  else if (input[0] == 'f'){
-    digitalWrite(monaco, LOW);
-  }
-
-  else if (input[0] == 'G'){
-    digitalWrite(timone, HIGH);
-  }
-
-  else if (input[0] == 'g'){
-    digitalWrite(timone, LOW);
-  }
-
-  else if (input[0] == 'H'){
-    digitalWrite(candele, HIGH);
-  }
-
-  else if (input[0] == 'h'){
-    digitalWrite(candele, LOW);
-  }
-
-  else if (input[0] == 'I'){
-    digitalWrite(culla, HIGH);
-  }
-
-  else if (input[0] == 'i'){
-    digitalWrite(culla, LOW);
-  }
-
-  else if (input[0] == 'J'){
-    digitalWrite(culla_start, HIGH);
-  }
-
-  else if (input[0] == 'j'){
-    digitalWrite(culla_start, LOW);
-  }
-
-  else if (input[0] == 'K'){
-    digitalWrite(foto, HIGH);
-  }
-
-  else if (input[0] == 'k'){
-    digitalWrite(foto, LOW);
-  }
-
-  else if (input[0] == 'L'){
-    digitalWrite(stereo, HIGH);
-  }
-
-  else if (input[0] == 'l'){
-    digitalWrite(stereo, LOW);
-  }
-
-  else if (input[0] == 'M'){
-    digitalWrite(ventilatore, HIGH);
-  }
-
-  else if (input[0] == 'm'){
-    digitalWrite(ventilatore, LOW);
-  }
-
-  else if (input[0] == 'O'){
-    digitalWrite(orologi, HIGH);
-  }
-
-  else if (input[0] == 'o'){
-    digitalWrite(orologi, LOW);
-  }
-
-  else if (input[0] == 'P'){
-    digitalWrite(organo, HIGH);
-  }
-
-  else if (input[0] == 'p'){
-    digitalWrite(organo, LOW);
-  }
-
-  else if (input[0] == 'Q'){
-    digitalWrite(pulsanti, HIGH);
-  }
-
-  else if (input[0] == 'q'){
-    digitalWrite(pulsanti, LOW);
-  }
-
-  else if (input[0] == 'R'){
-    digitalWrite(nano, HIGH);
-  }
-
-  else if (input[0] == 'r'){
-    digitalWrite(nano, LOW);
-  }
-
-  else if (input[0] == 'S'){
-    digitalWrite(organo_start, HIGH);
-  }
-
-  else if (input[0] == 's'){
-    digitalWrite(organo_start, LOW);
-  }
-
-  else if (input[0] == 'Y'){
-    digitalWrite(libero1, HIGH);
-  }
-
-  else if (input[0] == 'y'){
-    digitalWrite(libero1, LOW);
-  }
-
-  else if (input[0] == 'Z'){
-    digitalWrite(libero2, HIGH);
-  }
-
-  else if (input[0] == 'z'){
-    digitalWrite(libero2, LOW);
-  }
-
-  // luci
-  else if (input == "#A\n"){
-    digitalWrite(luce_primo, HIGH);
-  }
-  else if (input == "#a\n"){
-    digitalWrite(luce_primo, LOW);
-  }
-  else if (input == "#B\n"){
-    digitalWrite(luce_secondo, HIGH);
-  }
-  else if (input == "#b\n"){
-    digitalWrite(luce_secondo, LOW);
-  }
-  else if (input == "#C\n"){
-    digitalWrite(luce_terzo, HIGH);
-  }
-  else if (input == "#c\n"){
-    digitalWrite(luce_terzo, LOW);
-  }
-  else if (input == "#D\n"){
-    digitalWrite(luce_quarto, HIGH);
-  }
-  else if (input == "#d\n"){
-    digitalWrite(luce_quarto, LOW);
-  }
-  // electromagnets
-  else if (input[0] == '!') {
-    digitalWrite(M1, HIGH);
-  }
-  else if (input[0] == '1') {
-    digitalWrite(M1, LOW);
-  }
-
-  else if (input[0] == '@') {
-    digitalWrite(M2, HIGH);
-  }
-  else if (input[0] == '2') {
-    digitalWrite(M2, LOW);
-  }
-
-  else if (input[0] == '£') {
-    digitalWrite(M3, HIGH);
-  }
-  else if (input[0] == '3') {
-    digitalWrite(M3, LOW);
-  }
-
-  else if (input[0] == '$') {
-    digitalWrite(M4, HIGH);
-  }
-  else if (input[0] == '4') {
-    digitalWrite(M4, LOW);
-  }
-
-  else if (input[0] == '%') {
-    digitalWrite(M5, HIGH);
-  }
-  else if (input[0] == '5') {
-    digitalWrite(M5, LOW);
-  }
-
-  else if (input[0] == '^') {
-    digitalWrite(M6, HIGH);
-  }
-  else if (input[0] == '6') {
-    digitalWrite(M6, LOW);
-  }
-
-  else if (input[0] == '&') {
-    digitalWrite(M7, HIGH);
-  }
-  else if (input[0] == '7') {
-    digitalWrite(M7, LOW);
-  }
-
-  else if (input[0] == '*') {
-    digitalWrite(M8, HIGH);
-  }
-  else if (input[0] == '8') {
-    digitalWrite(M8, LOW);
-  }
-
-  else if (input[0] == '(') {
-    digitalWrite(M9, HIGH);
-  }
-  else if (input[0] == '9') {
-    digitalWrite(M9, LOW);
-  }
-
-  else if (input[0] == ')') {
-    digitalWrite(M10, HIGH);
-  }
-  else if (input[0] == '0'){
-    digitalWrite(M10, LOW);
-  }
-  else if (input[0] == 'N'){
-    digitalWrite(M11, HIGH);
-  }
-  else if (input[0] == 'n'){
-    digitalWrite(M11, LOW);
-  }
+void seriale() {
+  int index = input.indexOf(',');
+  int pin;
+  if(index != -1){
+    
+    for (int k=0; k<35; k++){
+      if (input.substring(0,index) == outputs[k].str)
+        pin = outputs[k].pin;
+    }
+    int state = (input.substring(index+1,index+2)).toInt();
+    digitalWrite(pin,state);
+  }   
   // animations
   else if (input == "_vent\n")
   {
-    digitalWrite(ventilatore, HIGH);
-    delay(5000);
-    digitalWrite(candele, LOW);
-    delay(200);
-    digitalWrite(ventilatore, LOW);
+  digitalWrite(ventilatore, HIGH);
+  delay(5000);
+  digitalWrite(candele, LOW);
+  delay(200);
+  digitalWrite(ventilatore, LOW);
   }
   else if (input == "_nano\n"){
-      digitalWrite(nano, LOW);
-      delay(200);
-      digitalWrite(nano, HIGH);
+    digitalWrite(nano, LOW);
+    delay(200);
+    digitalWrite(nano, HIGH);
   }
 
   // start
   else if (input == "_startGame\n" && !start_game){
-      start_game = true;
-      game_started = false;
-      Serial.println("Start Game");
+    start_game = true;
+    game_started = false;
+    Serial.println("Start Game");
   }
 
   // second floor
   else if (input == "_secondFloor\n" && !second_floor){
-    second_floor = true;
-    Serial.println("Gamers on second floors!");
+  second_floor = true;
+  Serial.println("Gamers on second floors!");
   }
   // scatola grande
   else if (input == "_scatolaGrande\n" && !scatolaGrande){
-    scatolaGrande = true;
-    digitalWrite(M8, LOW);
-    //Serial.println("The big box opened!");
+  scatolaGrande = true;
+  digitalWrite(M8, LOW);
+  //Serial.println("The big box opened!");
   }
   // preparation
   //(remember the big box that have the "scrocco" not electromagnets)
   else if (input == "_preparation\n" && !preparation){
-    preparation = true;
-    Serial.println("Go to close all the doors!");
-    // close all the doors
-    digitalWrite(M1, HIGH);
-    digitalWrite(M2, HIGH);
-    digitalWrite(M3, HIGH);
-    digitalWrite(M4, HIGH);
-    digitalWrite(M5, HIGH);
-    digitalWrite(M6, HIGH);
-    digitalWrite(M7, LOW); // scatola piccola
-    digitalWrite(M8, HIGH);
-    digitalWrite(M9, HIGH);
-    digitalWrite(M10, HIGH);
-    digitalWrite(monaco, HIGH);
-    digitalWrite(timone, HIGH);
-    // switch on all the lights
-    digitalWrite(luce_primo, HIGH);
-    delay(200);
-    digitalWrite(luce_secondo, HIGH);
-    delay(200);
-    digitalWrite(luce_terzo, HIGH);
-    delay(200);
-    digitalWrite(luce_quarto, HIGH);
+  preparation = true;
+  Serial.println("Go to close all the doors!");
+  // close all the doors
+  digitalWrite(M1, HIGH);
+  digitalWrite(M2, HIGH);
+  digitalWrite(M3, HIGH);
+  digitalWrite(M4, HIGH);
+  digitalWrite(M5, HIGH);
+  digitalWrite(M6, HIGH);
+  digitalWrite(M7, LOW); // scatola piccola
+  digitalWrite(M8, HIGH);
+  digitalWrite(M9, HIGH);
+  digitalWrite(M10, HIGH);
+  digitalWrite(monaco, HIGH);
+  digitalWrite(timone, HIGH);
+  // switch on all the lights
+  digitalWrite(luce_primo, HIGH);
+  delay(200);
+  digitalWrite(luce_secondo, HIGH);
+  delay(200);
+  digitalWrite(luce_terzo, HIGH);
+  delay(200);
+  digitalWrite(luce_quarto, HIGH);
 
   }
   // open all
   else if (input == "_openAll\n"){
-    // open all the doors
-    digitalWrite(M1, LOW);
-    digitalWrite(M2, LOW);
-    digitalWrite(M3, LOW);
-    digitalWrite(M4, LOW);
-    digitalWrite(M5, LOW);
-    digitalWrite(M6, LOW);
-    digitalWrite(M7, HIGH);
-    delay(100);
-    digitalWrite(M7, LOW);
-    digitalWrite(M8, LOW);
-    digitalWrite(M9, LOW);
-    digitalWrite(M10, LOW);
-    digitalWrite(M11, LOW);
-    // switch on all the lights
-    digitalWrite(luce_primo, HIGH);
-    delay(200);
-    digitalWrite(luce_secondo, HIGH);
-    delay(200);
-    digitalWrite(luce_terzo, HIGH);
-    delay(200);
-    digitalWrite(luce_quarto, HIGH);
+  // open all the doors
+  digitalWrite(M1, LOW);
+  digitalWrite(M2, LOW);
+  digitalWrite(M3, LOW);
+  digitalWrite(M4, LOW);
+  digitalWrite(M5, LOW);
+  digitalWrite(M6, LOW);
+  digitalWrite(M7, HIGH);
+  delay(100);
+  digitalWrite(M7, LOW);
+  digitalWrite(M8, LOW);
+  digitalWrite(M9, LOW);
+  digitalWrite(M10, LOW);
+  digitalWrite(M11, LOW);
+  // switch on all the lights
+  digitalWrite(luce_primo, HIGH);
+  delay(200);
+  digitalWrite(luce_secondo, HIGH);
+  delay(200);
+  digitalWrite(luce_terzo, HIGH);
+  delay(200);
+  digitalWrite(luce_quarto, HIGH);
   }
   // Test all pins ON
   /*else if (input == "_allON\n");
-    for (int i = 22; i < 54; i++){
-      digitalWrite(i, HIGH);
-      Serial.print("Accensione pin: ");
-      Serial.println(i);
-      delay(1000);
-    }
-    */
+  for (int i = 22; i < 54; i++){
+    digitalWrite(i, HIGH);
+    Serial.print("Accensione pin: ");
+    Serial.println(i);
+    delay(1000);
+  }
+  */
   // lettura giochi
   else if (input == "_lettura\n"){
-    Serial.println("\nLettura input");
-    lettura();
+  Serial.println("\nLettura input");
+  lettura();
   }
 
   // test serial
   else if (input == "_test_on\n")
   {
-      for (int i = 0; i < 10; i++) {
-        digitalWrite(led, HIGH);
-        delay(100);
-        digitalWrite(led, LOW);
-      }
+    for (int i = 0; i < 10; i++) {
+    digitalWrite(led, HIGH);
+    delay(100);
+    digitalWrite(led, LOW);
+    }
   }
 }
