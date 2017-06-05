@@ -208,6 +208,26 @@ output outputs[35]={
   {"M11", M11}
 };
 
+typedef struct {
+  String str;
+  boolean OK;
+} ok;
+ok okHints[13]={ 
+  {"OK_valvole", OK_valvole},
+  {"OK_generatore", OK_generatore},
+  {"OK_motore", OK_motore},
+  {"OK_interruttori", OK_interruttori},
+  {"OK_croce", OK_croce},
+  {"OK_start", OK_start},
+  {"OK_foto", OK_foto},
+  {"OK_stereo", OK_stereo},
+  {"OK_culla", OK_culla},
+  {"OK_orologi", OK_orologi},
+  {"OK_organo", OK_organo},
+  {"OK_libero", OK_libero},
+  {"OK_timone", OK_timone}  
+};
+
 
 void setup() {
   Serial.flush();
@@ -261,7 +281,6 @@ void loop() {
 
 void game () {
   if (start_game){
-
     // reset booleane
     OK_valvole = false;
     OK_motore = false;
@@ -292,139 +311,150 @@ void game () {
     digitalWrite(M11, HIGH);
     digitalWrite(croce, HIGH);
     // accendi i primi giochi
-    digitalWrite(valvole, HIGH);
     start_game = false;
     game_started = true;
-    digitalWrite(luce_terzo,LOW);
   }
-  else if (game_started){
-  sign_valvole = digitalRead(in_valvole);
-  if (!sign_valvole && !OK_valvole){
-    digitalWrite(danger, HIGH); // switch off "DANGER"
-    digitalWrite(motore, HIGH); // switch on motor
-    digitalWrite(M1, LOW); // open the door
-    OK_valvole = true;
-  }
-  delay(10);
-  if(OK_valvole){
-    sign_generatore = digitalRead(in_generatore);
-  }
-  if (sign_generatore && !OK_generatore){
-    digitalWrite(luce_quarto, HIGH);
-    digitalWrite(luce_terzo, HIGH);
-    OK_generatore = true;
-  }
-  if(OK_generatore){
-    sign_motore = digitalRead(in_motore);
-  }
-  if (!sign_motore && !OK_motore){
-    digitalWrite(M2, LOW); // open the door
-    digitalWrite(M11, LOW);
-    delay(2000);
-    //digitalWrite(luce_terzo, LOW);
-    //digitalWrite(luce_quarto, LOW);
-    digitalWrite(monaco, HIGH);
-    OK_motore = true;
-  }
+  else if (game_started){  
+	  Serial.println("gameStarted");
+	  //JAVA digitalWrite(valvole, HIGH);
+	  sign_valvole = digitalRead(in_valvole);
+	  if (!sign_valvole && !OK_valvole){
+		Serial.println("valvoleDone");
+		//digitalWrite(danger, HIGH); // switch off "DANGER"
+		//digitalWrite(motore, HIGH); // switch on motor
+		//digitalWrite(M1, LOW); // open the door
+		OK_valvole = true;
+	  }
+	  delay(10);
+	  if(OK_valvole){
+		sign_generatore = digitalRead(in_generatore);
+	  }
+	  if (sign_generatore && !OK_generatore){
+		Serial.println("generatoreDone");
+		//digitalWrite(luce_quarto, HIGH);
+		//digitalWrite(luce_terzo, HIGH);
+		OK_generatore = true;
+	  }
+	  if(OK_generatore){
+		sign_motore = digitalRead(in_motore);
+	  }
+	  if (!sign_motore && !OK_motore){
+		Serial.println("motoreDone");
+		//digitalWrite(M2, LOW); // open the door
+		//digitalWrite(M11, LOW);
+		//delay(2000);
+		//digitalWrite(luce_terzo, LOW);
+		//digitalWrite(luce_quarto, LOW);
+		//digitalWrite(monaco, HIGH);
+		OK_motore = true;
+	  }
 
-  // if the players are on the second floor
-  if (second_floor && !OK_secondFloor){
-    digitalWrite(M11, HIGH); //cella croce
-    delay(200);
-    digitalWrite(monaco, LOW);
-    digitalWrite(luce_primo, HIGH);
-    digitalWrite(candele, HIGH);   
-    OK_secondFloor = true;
-    // ###############################LAVORA!!
-    //    digitalWrite(M6, LOW); JAVA
-    // M6 HIGH
-    // M4 LOW
-    // luce primo low
-    }
+	  // if the players are on the second floor
+	  if (second_floor && !OK_secondFloor){
+		//digitalWrite(M11, HIGH); //cella croce
+		//delay(200);
+		//digitalWrite(monaco, LOW);
+		//digitalWrite(luce_primo, HIGH);
+		//digitalWrite(candele, HIGH);   
+		OK_secondFloor = true;
+		// ###############################LAVORA!!
+		//    digitalWrite(M6, LOW); JAVA
+		// M6 HIGH
+		// M4 LOW
+		// luce primo low auto
+		}
 
-  // waiting for operator "_vent" & off tutti i caschi
-  // waiting for operator unlock the BIG BOX (JOHN JAVA) _scatolaGrande
-  if (OK_secondFloor){
-    sign_croce = digitalRead(in_croce);
-  }
-  if (!sign_croce && !OK_croce){
-    digitalWrite(M7, HIGH); //sblocca scatola piccola
-    delay(20);
-    digitalWrite(M11, LOW); //cella della croce
-    delay(20);
-    digitalWrite(foto, HIGH); 
-    OK_croce = true;
-  }
-  if(OK_croce) {
-    sign_foto = digitalRead(in_foto);
-  }
-  if (!sign_foto && !OK_foto){
-    digitalWrite(stereo, HIGH);
-    delay(3000);
-    digitalWrite(culla, HIGH); // accende la culla
-    delay(20);
-    OK_foto = true;
-  }
-  if(OK_foto) {
-    sign_stereo = digitalRead(in_stereo);
-  }
-  if (!sign_stereo && !OK_stereo){
-    digitalWrite(culla, LOW);
-    delay(4000);
-    digitalWrite(stereo, LOW);
-    delay(1000);
-    digitalWrite(culla, HIGH);
-    OK_stereo = true;
-  }
-  if(OK_stereo) {
-    sign_culla = digitalRead(in_culla);
-  }
-  if (!sign_culla && !OK_culla){
-    digitalWrite(M10, LOW); // sblocca cella timone
-    delay(50);
-    digitalWrite(timone, HIGH);
-    digitalWrite(M7, LOW); //rilascia la calamita scatola piccola
-    OK_culla = true;
-  }
-  if(OK_culla){
-    sign_timone = digitalRead(in_timone);
-  }
-  if (!sign_timone && !OK_timone) {
-    digitalWrite(M9, LOW); //sblocca la porta per gli orologi
-    OK_timone = true;
-    digitalWrite(orologi, HIGH);
-  }
-  if(OK_timone){
-    sign_orologi = digitalRead(in_orologi);
-  }
-  if (!sign_orologi && !OK_orologi) {
-    digitalWrite(M5, LOW);// apre porta per il nano
-    digitalWrite(luce_primo, HIGH);
-    delay(6000);
-    digitalWrite(nano, HIGH);
-    delay(100);
-    digitalWrite(organo, HIGH);
-    delay(200);
-    digitalWrite(organo, LOW);
-    delay(200);
-    digitalWrite(organo,HIGH);
-    digitalWrite(pulsanti, HIGH);
-    OK_orologi = true;
-  }
-  if(OK_orologi){
-    sign_organo = digitalRead(in_interruttori);
-  }
-  if (!sign_organo && !OK_organo) {
-    digitalWrite(nano,LOW);
-    digitalWrite(luce_primo,LOW);
-    digitalWrite(luce_secondo, HIGH); // accendi la luce finale
-    delay(10000);
-    digitalWrite(mano, HIGH);
-    OK_organo = true;
-  }
-  if(OK_organo){
-    //reset all
-  }
+	  // waiting for operator "_vent" & off tutti i caschi
+	  // waiting for operator unlock the BIG BOX (JOHN JAVA) _scatolaGrande
+	  if (OK_secondFloor){
+		sign_croce = digitalRead(in_croce);
+	  }
+	  if (!sign_croce && !OK_croce){
+		Serial.println("croceDone");  
+		// digitalWrite(M7, HIGH); //sblocca scatola piccola
+		// delay(20);
+		// digitalWrite(M11, LOW); //cella della croce
+		// delay(20);
+		// digitalWrite(foto, HIGH); 
+		OK_croce = true;
+	  }
+	  if(OK_croce) {
+		sign_foto = digitalRead(in_foto);
+	  }
+	  if (!sign_foto && !OK_foto){
+		Serial.println("fotoDone"); 
+		// digitalWrite(stereo, HIGH);
+		// delay(3000);
+		// digitalWrite(culla, HIGH); // accende la culla
+		// delay(20);
+		OK_foto = true;
+	  }
+	  if(OK_foto) {
+		sign_stereo = digitalRead(in_stereo);
+	  }
+	  if (!sign_stereo && !OK_stereo){
+		Serial.println("stereoDone");
+		// digitalWrite(culla, LOW);
+		// delay(4000);
+		// digitalWrite(stereo, LOW);
+		// delay(1000);
+		// digitalWrite(culla, HIGH);
+		OK_stereo = true;
+	  }
+	  if(OK_stereo) {
+		sign_culla = digitalRead(in_culla);
+	  }
+	  if (!sign_culla && !OK_culla){
+		Serial.println("cullaDone");  
+		// digitalWrite(M10, LOW); // sblocca cella timone
+		// delay(50);
+		// digitalWrite(timone, HIGH);
+		// digitalWrite(M7, LOW); //rilascia la calamita scatola piccola
+		OK_culla = true;
+	  }
+	  if(OK_culla){
+		sign_timone = digitalRead(in_timone);
+	  }
+	  if (!sign_timone && !OK_timone) {
+		// Serial.println("timoneDone"); 
+		// digitalWrite(M9, LOW); //sblocca la porta per gli orologi
+		// digitalWrite(orologi, HIGH);
+		OK_timone = true;
+		
+	  }
+	  if(OK_timone){
+		sign_orologi = digitalRead(in_orologi);
+	  }
+	  if (!sign_orologi && !OK_orologi) {
+		Serial.println("orologiDone");   
+		// digitalWrite(M5, LOW);// apre porta per il nano
+		// digitalWrite(luce_primo, HIGH);
+		// delay(6000);
+		// digitalWrite(nano, HIGH);
+		// delay(100);
+		// digitalWrite(organo, HIGH);
+		// delay(200);
+		// digitalWrite(organo, LOW);
+		// delay(200);
+		// digitalWrite(organo,HIGH);
+		// digitalWrite(pulsanti, HIGH);
+		OK_orologi = true;
+	  }
+	  if(OK_orologi){
+		sign_organo = digitalRead(in_interruttori);
+	  }
+	  if (!sign_organo && !OK_organo) {
+		Serial.println("organoDone");   
+		// digitalWrite(nano,LOW);
+		// digitalWrite(luce_primo,LOW);
+		// digitalWrite(luce_secondo, HIGH); // accendi la luce finale
+		// delay(10000);
+		// digitalWrite(mano, HIGH);
+		OK_organo = true;
+	  }
+	  if(OK_organo){
+		//reset all
+	  }
 /*
   sign_start = digitalRead(in_start);
   if (!read_start && !sign_start){
@@ -438,25 +468,15 @@ void game () {
 
 void lettura() {
   sign_valvole = digitalRead(in_valvole);
-  delay(10);
   sign_generatore = !digitalRead(in_generatore);
-  delay(10);
   sign_motore = digitalRead(in_motore);
-  delay(10);
   sign_organo = digitalRead(in_organo);
-  delay(10);
   sign_orologi = digitalRead(in_orologi);
-  delay(10);
   sign_foto = digitalRead(in_foto);
-  delay(10);
   sign_timone = digitalRead(in_timone);
-  delay(10);
   sign_croce = digitalRead(in_croce);
-  delay(10);
   sign_culla = digitalRead(in_culla);
-  delay(10);
   sign_stereo = digitalRead(in_stereo);
-  delay(10);
   sign_interruttori = digitalRead(in_interruttori);
 
   if (!sign_valvole){
@@ -513,13 +533,16 @@ void seriale() {
   int index = input.indexOf(',');
   int pin;
   if(index != -1){
-    
     for (int k=0; k<35; k++){
       if (input.substring(0,index) == outputs[k].str)
         pin = outputs[k].pin;
     }
     int state = (input.substring(index+1,index+2)).toInt();
     digitalWrite(pin,state);
+	for (int k=0; k<13; k++){
+      if (input.substring(0,index) == okHints[k].str)
+        okHints[k].OK = true;
+    }
   }   
   // animations
   else if (input == "_vent\n")
@@ -540,7 +563,6 @@ void seriale() {
   else if (input == "_startGame\n" && !start_game){
     start_game = true;
     game_started = false;
-    Serial.println("Start Game");
   }
 
   // second floor
