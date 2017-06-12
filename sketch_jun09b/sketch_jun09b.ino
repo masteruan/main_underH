@@ -1,8 +1,6 @@
 /*
  Main sottoterra
- 9 Giugno 2017
- problemi con programma JAVA
- 
+ 2 Giugno 2017
 OUTPUT
 Candele 29 -- M4  46
 Timone 28  -- M5  47
@@ -169,7 +167,7 @@ typedef struct {
   String str;
   int pin;
 } output;
-output outputs[35]={
+output outputs[35]={ 
   {"valvole", valvole},
   {"danger", danger},
   {"mano", mano},
@@ -214,7 +212,7 @@ typedef struct {
   String str;
   boolean OK;
 } ok;
-ok okHints[13]={
+ok okHints[13]={ 
   {"OK_valvole", OK_valvole},
   {"OK_generatore", OK_generatore},
   {"OK_motore", OK_motore},
@@ -227,7 +225,7 @@ ok okHints[13]={
   {"OK_orologi", OK_orologi},
   {"OK_organo", OK_organo},
   {"OK_libero", OK_libero},
-  {"OK_timone", OK_timone}
+  {"OK_timone", OK_timone}  
 };
 
 
@@ -264,7 +262,7 @@ void setup() {
     }
     myDFPlayer.volume(30); // min = 0 max = 30
     myDFPlayer.loop(1);
-
+    
     Serial.println("################");
     Serial.println("You are Welcome!");
 }
@@ -296,11 +294,11 @@ void game () {
     OK_orologi = false;
     OK_organo = false;
     OK_timone = false;
-
+    
     // chiudi tutte le elettrocalamite
-    for(int i= 0; i<54; i++){
-      digitalWrite(i,LOW);
-    }
+//    for(int i= 0; i<54; i++){
+//      digitalWrite(i,LOW);
+//    }
     digitalWrite(M1, HIGH);
     digitalWrite(M2, HIGH);
     digitalWrite(M3, HIGH);
@@ -312,16 +310,16 @@ void game () {
     digitalWrite(M10, HIGH);
     digitalWrite(M11, HIGH);
     digitalWrite(croce, HIGH);
-    // accendi i primi giochi
+    digitalWrite(luce_terzo,LOW);
     start_game = false;
     game_started = true;
-    Serial.println("gameStarted");
+    for(int i=0; i <5 ;i++ ) Serial.println("gameStarted");
   }
-  else if (game_started){
-    //JAVA digitalWrite(valvole, HIGH);
+  else if (game_started){  
+    digitalWrite(valvole, HIGH);
     sign_valvole = digitalRead(in_valvole);
     if (!sign_valvole && !OK_valvole){
-    Serial.println("valvoleDone");
+    for(int i=0; i <5 ;i++ ) Serial.println("valvoleDone");
     digitalWrite(danger, HIGH); // switch off "DANGER"
     digitalWrite(motore, HIGH); // switch on motor
     digitalWrite(M1, LOW); // open the door
@@ -332,21 +330,21 @@ void game () {
     sign_generatore = digitalRead(in_generatore);
     }
     if (sign_generatore && !OK_generatore){
-    Serial.println("generatoreDone");
+    for(int i=0; i <5 ;i++ ) Serial.println("generatoreDone");
     digitalWrite(luce_quarto, HIGH);
-    digitalWrite(luce_terzo, HIGH);
+    //digitalWrite(luce_terzo, HIGH);
     OK_generatore = true;
     }
     if(OK_generatore){
     sign_motore = digitalRead(in_motore);
     }
     if (!sign_motore && !OK_motore){
-    Serial.println("motoreDone");
+    for(int i=0; i <5 ;i++ ) Serial.println("motoreDone");
     digitalWrite(M2, LOW); // open the door
     digitalWrite(M11, LOW);
     delay(2000);
-    digitalWrite(luce_terzo, LOW);
-    digitalWrite(luce_quarto, LOW);
+    //digitalWrite(luce_terzo, LOW);
+    //digitalWrite(luce_quarto, LOW);
     digitalWrite(monaco, HIGH);
     OK_motore = true;
     }
@@ -356,8 +354,7 @@ void game () {
     digitalWrite(M11, HIGH); //cella croce
     delay(200);
     digitalWrite(monaco, LOW);
-    digitalWrite(luce_primo, HIGH);
-    digitalWrite(candele, HIGH);
+    digitalWrite(candele, HIGH);   
     OK_secondFloor = true;
     // ###############################LAVORA!!
     //    digitalWrite(M6, LOW); JAVA
@@ -372,19 +369,19 @@ void game () {
     sign_croce = digitalRead(in_croce);
     }
     if (!sign_croce && !OK_croce){
-    Serial.println("croceDone");
+    for(int i=0; i <5 ;i++ ) Serial.println("croceDone");
     digitalWrite(M7, HIGH); //sblocca scatola piccola
     delay(20);
     digitalWrite(M11, LOW); //cella della croce
     delay(20);
-    digitalWrite(foto, HIGH);
+    digitalWrite(foto, HIGH); 
     OK_croce = true;
     }
     if(OK_croce) {
     sign_foto = digitalRead(in_foto);
     }
     if (!sign_foto && !OK_foto){
-    Serial.println("fotoDone");
+    for(int i=0; i <5 ;i++ ) Serial.println("fotoDone"); 
     digitalWrite(stereo, HIGH);
     delay(3000);
     digitalWrite(culla, HIGH); // accende la culla
@@ -395,7 +392,7 @@ void game () {
     sign_stereo = digitalRead(in_stereo);
     }
     if (!sign_stereo && !OK_stereo){
-    Serial.println("stereoDone");
+    for(int i=0; i <5 ;i++ ) Serial.println("stereoDone");
     digitalWrite(culla, LOW);
     delay(4000);
     digitalWrite(stereo, LOW);
@@ -407,7 +404,7 @@ void game () {
     sign_culla = digitalRead(in_culla);
     }
     if (!sign_culla && !OK_culla){
-    Serial.println("cullaDone");
+    for(int i=0; i <5 ;i++ ) Serial.println("cullaDone");  
     digitalWrite(M10, LOW); // sblocca cella timone
     delay(50);
     digitalWrite(timone, HIGH);
@@ -418,27 +415,27 @@ void game () {
     sign_timone = digitalRead(in_timone);
     }
     if (!sign_timone && !OK_timone) {
-    Serial.println("timoneDone");
+    for(int i=0; i <5 ;i++ ) Serial.println("timoneDone"); 
     digitalWrite(M9, LOW); //sblocca la porta per gli orologi
     digitalWrite(orologi, HIGH);
     OK_timone = true;
-
+    
     }
     if(OK_timone){
     sign_orologi = digitalRead(in_orologi);
     }
     if (!sign_orologi && !OK_orologi) {
-    Serial.println("orologiDone");
+    for(int i=0; i <5 ;i++ ) Serial.println("orologiDone");
     digitalWrite(M5, LOW);// apre porta per il nano
-    digitalWrite(luce_primo, HIGH);
+    //digitalWrite(luce_primo, HIGH);
     delay(6000);
     digitalWrite(nano, HIGH);
     delay(100);
     digitalWrite(organo, HIGH);
     delay(200);
-    digitalWrite(organo, LOW);
-    delay(200);
-    digitalWrite(organo,HIGH);
+    //digitalWrite(organo, LOW);
+    //delay(200);
+    //digitalWrite(organo,HIGH);
     digitalWrite(pulsanti, HIGH);
     OK_orologi = true;
     }
@@ -446,7 +443,7 @@ void game () {
     sign_organo = digitalRead(in_interruttori);
     }
     if (!sign_organo && !OK_organo) {
-    Serial.println("organoDone");
+    for(int i=0; i <5 ;i++ ) Serial.println("organoDone");   
     digitalWrite(nano,LOW);
     digitalWrite(luce_primo,LOW);
     digitalWrite(luce_secondo, HIGH); // accendi la luce finale
@@ -555,7 +552,7 @@ void seriale() {
       if (input.substring(0,index) == okHints[k].str)
         okHints[k].OK = true;
     }
-  }
+  }   
   // animations
   else if (input == "_vent\n")
   {
@@ -593,6 +590,7 @@ void seriale() {
   else if (input == "_preparation\n" && !preparation){
   preparation = true;
   Serial.println("Go to close all the doors!");
+  digitalWrite(organo,HIGH);
   // close all the doors
   digitalWrite(M1, HIGH);
   digitalWrite(M2, HIGH);
@@ -614,7 +612,11 @@ void seriale() {
   digitalWrite(luce_terzo, HIGH);
   delay(200);
   digitalWrite(luce_quarto, HIGH);
-
+  
+  delay(200);
+  digitalWrite(organo_start,HIGH);
+  delay(2000);
+  digitalWrite(organo_start,LOW);
   }
   // open all
   else if (input == "_openAll\n"){
