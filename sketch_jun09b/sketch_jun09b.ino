@@ -48,7 +48,7 @@ Send to serial
 #include "Arduino.h"
 #include "SoftwareSerial.h"
 #include "DFRobotDFPlayerMini.h"
-SoftwareSerial mySoftwareSerial(6, 7); // RX, TX
+SoftwareSerial mySoftwareSerial(5, 7); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 
 // Variables
@@ -167,7 +167,7 @@ typedef struct {
   String str;
   int pin;
 } output;
-output outputs[35]={ 
+output outputs[35]={
   {"valvole", valvole},
   {"danger", danger},
   {"mano", mano},
@@ -212,7 +212,7 @@ typedef struct {
   String str;
   boolean OK;
 } ok;
-ok okHints[13]={ 
+ok okHints[13]={
   {"OK_valvole", OK_valvole},
   {"OK_generatore", OK_generatore},
   {"OK_motore", OK_motore},
@@ -225,7 +225,7 @@ ok okHints[13]={
   {"OK_orologi", OK_orologi},
   {"OK_organo", OK_organo},
   {"OK_libero", OK_libero},
-  {"OK_timone", OK_timone}  
+  {"OK_timone", OK_timone}
 };
 
 
@@ -235,7 +235,7 @@ void setup() {
   for (int i = 22; i < 54; i++){
     pinMode(i,OUTPUT);
   }
-  for (int i = 2; i <= 6; i++){
+  for (int i = 2; i < 7; i++){
     pinMode(i, OUTPUT);
   }
     pinMode(led, OUTPUT); // Set pin 13 as digital out
@@ -262,7 +262,7 @@ void setup() {
     }
     myDFPlayer.volume(30); // min = 0 max = 30
     myDFPlayer.loop(1);
-    
+
     Serial.println("################");
     Serial.println("You are Welcome!");
 }
@@ -294,11 +294,11 @@ void game () {
     OK_orologi = false;
     OK_organo = false;
     OK_timone = false;
-    
-    for(int i= 0; i<54; i++){
+
+    /*for(int i= 0; i<54; i++){
       digitalWrite(i,LOW);
     }
-    
+    */
     digitalWrite(M1, HIGH);
     digitalWrite(M2, HIGH);
     digitalWrite(M3, HIGH);
@@ -310,13 +310,14 @@ void game () {
     digitalWrite(M10, HIGH);
     digitalWrite(M11, HIGH);
     digitalWrite(croce, HIGH);
+    digitalWrite(culla_gira, HIGH);
     digitalWrite(luce_terzo,LOW);
 
     start_game = false;
     game_started = true;
     for(int i=0; i <5 ;i++ ) Serial.println("gameStarted");
   }
-  else if (game_started){  
+  else if (game_started){
     digitalWrite(valvole, HIGH);
     sign_valvole = digitalRead(in_valvole);
     if (!sign_valvole && !OK_valvole){
@@ -355,7 +356,7 @@ void game () {
     digitalWrite(M11, HIGH); //cella croce
     delay(200);
     digitalWrite(monaco, LOW);
-    digitalWrite(candele, HIGH);   
+    digitalWrite(candele, HIGH);
     OK_secondFloor = true;
     // ###############################LAVORA!!
     //    digitalWrite(M6, LOW); JAVA
@@ -375,14 +376,14 @@ void game () {
     delay(20);
     digitalWrite(M11, LOW); //cella della croce
     delay(20);
-    digitalWrite(foto, HIGH); 
+    digitalWrite(foto, HIGH);
     OK_croce = true;
     }
     if(OK_croce) {
     sign_foto = digitalRead(in_foto);
     }
     if (!sign_foto && !OK_foto){
-    for(int i=0; i <5 ;i++ ) Serial.println("fotoDone"); 
+    for(int i=0; i <5 ;i++ ) Serial.println("fotoDone");
     digitalWrite(stereo, HIGH);
     delay(3000);
     digitalWrite(culla, HIGH); // accende la culla
@@ -405,7 +406,7 @@ void game () {
     sign_culla = digitalRead(in_culla);
     }
     if (!sign_culla && !OK_culla){
-    for(int i=0; i <5 ;i++ ) Serial.println("cullaDone");  
+    for(int i=0; i <5 ;i++ ) Serial.println("cullaDone");
     digitalWrite(M10, LOW); // sblocca cella timone
     delay(50);
     digitalWrite(timone, HIGH);
@@ -416,11 +417,11 @@ void game () {
     sign_timone = digitalRead(in_timone);
     }
     if (!sign_timone && !OK_timone) {
-    for(int i=0; i <5 ;i++ ) Serial.println("timoneDone"); 
+    for(int i=0; i <5 ;i++ ) Serial.println("timoneDone");
     digitalWrite(M9, LOW); //sblocca la porta per gli orologi
     digitalWrite(orologi, HIGH);
     OK_timone = true;
-    
+
     }
     if(OK_timone){
     sign_orologi = digitalRead(in_orologi);
@@ -444,7 +445,7 @@ void game () {
     sign_organo = digitalRead(in_interruttori);
     }
     if (!sign_organo && !OK_organo) {
-    for(int i=0; i <5 ;i++ ) Serial.println("organoDone");   
+    for(int i=0; i <5 ;i++ ) Serial.println("organoDone");
     digitalWrite(nano,LOW);
     digitalWrite(luce_primo,LOW);
     digitalWrite(luce_secondo, HIGH); // accendi la luce finale
@@ -553,7 +554,7 @@ void seriale() {
       if (input.substring(0,index) == okHints[k].str)
         okHints[k].OK = true;
     }
-  }   
+  }
   // animations
   else if (input == "_vent\n")
   {
@@ -618,7 +619,7 @@ void seriale() {
   digitalWrite(organo_start,HIGH);
   delay(2000);
   digitalWrite(organo_start,LOW);
-  
+
   }
   // open all
   else if (input == "_openAll\n"){
