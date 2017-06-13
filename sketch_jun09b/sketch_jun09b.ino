@@ -11,14 +11,14 @@ Mano 24    -- M9  51
 Danger 23  -- M10 52
 Valvole 22 -- M11 53
 --         --
-Organo 37         --  Pulsanti  38
+Organo 37         --  Pulsanti  41
 Orologi 36        --  Organo play 39
 Ventilatore 35    --  Nano 40
-Timone (segle) 34 --  Libero 41
+Timone (segle) 34 --  Libero --
 Stereo 33         --  Libero 42
 Foto 32           --  M1 43
-Culla (gira) 31   --  M2 44
-Culla 30          --  M3 45
+ex culla gira31   --  M2 44
+Culla 30          --  Culla (gira) 6
 --                --
 RELAY PICCOLI
 audio
@@ -132,13 +132,13 @@ int monaco = 27;
 int timone = 28;
 int candele = 29;
 int culla = 30;
-int culla_start = 31;
+int culla_gira = 6;
+
 int foto = 32;
 int stereo = 33;
 
 //int timone_segnale = 34;
 int ventilatore = 34;
-
 int orologi = 36;
 int organo = 37;
 int pulsanti = 41;
@@ -177,7 +177,7 @@ output outputs[35]={
   {"timone", timone},
   {"candele", candele},
   {"culla", culla},
-  {"culla_start", culla_start},
+  {"culla_gira", culla_gira},
   {"foto", foto},
   {"stereo", stereo},
   //{"timone_segnale", 34},
@@ -235,7 +235,7 @@ void setup() {
   for (int i = 22; i < 54; i++){
     pinMode(i,OUTPUT);
   }
-  for (int i = 2; i < 6; i++){
+  for (int i = 2; i <= 6; i++){
     pinMode(i, OUTPUT);
   }
     pinMode(led, OUTPUT); // Set pin 13 as digital out
@@ -295,10 +295,10 @@ void game () {
     OK_organo = false;
     OK_timone = false;
     
-    // chiudi tutte le elettrocalamite
-//    for(int i= 0; i<54; i++){
-//      digitalWrite(i,LOW);
-//    }
+    for(int i= 0; i<54; i++){
+      digitalWrite(i,LOW);
+    }
+    
     digitalWrite(M1, HIGH);
     digitalWrite(M2, HIGH);
     digitalWrite(M3, HIGH);
@@ -311,6 +311,7 @@ void game () {
     digitalWrite(M11, HIGH);
     digitalWrite(croce, HIGH);
     digitalWrite(luce_terzo,LOW);
+
     start_game = false;
     game_started = true;
     for(int i=0; i <5 ;i++ ) Serial.println("gameStarted");
@@ -604,6 +605,7 @@ void seriale() {
   digitalWrite(M10, HIGH);
   digitalWrite(monaco, HIGH);
   digitalWrite(timone, HIGH);
+  digitalWrite(culla_gira, HIGH);
   // switch on all the lights
   digitalWrite(luce_primo, HIGH);
   delay(200);
@@ -612,11 +614,11 @@ void seriale() {
   digitalWrite(luce_terzo, HIGH);
   delay(200);
   digitalWrite(luce_quarto, HIGH);
-  
   delay(200);
   digitalWrite(organo_start,HIGH);
   delay(2000);
   digitalWrite(organo_start,LOW);
+  
   }
   // open all
   else if (input == "_openAll\n"){
