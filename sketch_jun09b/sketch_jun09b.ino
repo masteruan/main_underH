@@ -48,7 +48,7 @@ Send to serial
 #include "Arduino.h"
 #include "SoftwareSerial.h"
 #include "DFRobotDFPlayerMini.h"
-SoftwareSerial mySoftwareSerial(5, 7); // RX, TX
+SoftwareSerial mySoftwareSerial(7, 8); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 
 // Variables
@@ -311,8 +311,12 @@ void game () {
     digitalWrite(M11, HIGH);
     digitalWrite(croce, HIGH);
     digitalWrite(culla_gira, HIGH);
+    // spegni luci
+    digitalWrite(luce_primo, LOW);
+    digitalWrite(luce_secondo, LOW); 
     digitalWrite(luce_terzo,LOW);
-
+    digitalWrite(luce_quarto, LOW);
+    
     start_game = false;
     game_started = true;
     for(int i=0; i <5 ;i++ ) Serial.println("gameStarted");
@@ -423,6 +427,7 @@ void game () {
     OK_timone = true;
 
     }
+    delay(1000);
     if(OK_timone){
     sign_orologi = digitalRead(in_orologi);
     }
@@ -493,36 +498,47 @@ void lettura() {
   if (!sign_valvole){
     Serial.println("valvole risolte");
   }
+  delay(100);
   if (!sign_generatore){
     Serial.println("generatore risolto");
   }
+  delay(100);
   if (!sign_motore){
     Serial.println("motore risolte");
   }
+  delay(100);
   if (!sign_interruttori){
     Serial.println("interruttori risolti");
   }
+  delay(100);
   if (!sign_stereo){
     Serial.println("stereo risolte");
   }
+  delay(100);
   if(!sign_culla){
     Serial.println("culla risolta");
   }
+  delay(100);
   if(!sign_croce){
     Serial.println("croce risolta");
   }
+  delay(100);
   if(!sign_foto){
     Serial.println("foto risolta");
   }
+  delay(100);
   if(!sign_timone){
     Serial.println("timone risolto");
   }
+  delay(100);
   if(!sign_orologi){
     Serial.println("orologi risolti");
   }
+  delay(100);
   if(!sign_organo){
     Serial.println("organo risolto");
   }
+  delay(100);
 
 }
 
