@@ -452,7 +452,7 @@ void game () {
     if (!sign_organo && !OK_organo) {
     for(int i=0; i <5 ;i++ ) Serial.println("organoDone");
     digitalWrite(nano,LOW);
-    digitalWrite(luce_primo,LOW);
+    //digitalWrite(luce_primo,LOW);
     digitalWrite(luce_secondo, HIGH); // accendi la luce finale
     delay(10000);
     digitalWrite(mano, HIGH);
@@ -566,7 +566,7 @@ void seriale() {
     }
     int state = (input.substring(index+1,index+2)).toInt();
     digitalWrite(pin,state);
-  for (int k=0; k<13; k++){
+	for (int k=0; k<13; k++){
       if (input.substring(0,index) == okHints[k].str)
         okHints[k].OK = true;
     }
@@ -579,6 +579,7 @@ void seriale() {
   digitalWrite(candele, LOW);
   delay(200);
   digitalWrite(ventilatore, LOW);
+  digitalWrite(luce_primo, HIGH);
   }
   else if (input == "_nano\n"){
     digitalWrite(nano, LOW);
