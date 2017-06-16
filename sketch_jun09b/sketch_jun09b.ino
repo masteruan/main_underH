@@ -212,20 +212,33 @@ typedef struct {
   String str;
   boolean OK;
 } ok;
+boolean H_valvole = false ;
+boolean H_generatore = false ;
+boolean H_motore = false ;
+boolean H_interruttori = false ;
+boolean H_croce = false ;
+boolean H_start = false ;
+boolean H_foto = false ;
+boolean H_stereo = false ;
+boolean H_culla = false ;
+boolean H_orologi = false ;
+boolean H_organo = false ;
+boolean H_libero = false ;
+boolean H_timone =false ;
 ok okHints[13]={
-  {"OK_valvole", OK_valvole},
-  {"OK_generatore", OK_generatore},
-  {"OK_motore", OK_motore},
-  {"OK_interruttori", OK_interruttori},
-  {"OK_croce", OK_croce},
-  {"OK_start", OK_start},
-  {"OK_foto", OK_foto},
-  {"OK_stereo", OK_stereo},
-  {"OK_culla", OK_culla},
-  {"OK_orologi", OK_orologi},
-  {"OK_organo", OK_organo},
-  {"OK_libero", OK_libero},
-  {"OK_timone", OK_timone}
+  {"OK_valvole", H_valvole},
+  {"OK_generatore", H_generatore},
+  {"OK_motore", H_motore},
+  {"OK_interruttori", H_interruttori},
+  {"OK_croce", H_croce},
+  {"OK_start", H_start},
+  {"OK_foto", H_foto},
+  {"OK_stereo", H_stereo},
+  {"OK_culla", H_culla},
+  {"OK_orologi", H_orologi},
+  {"OK_organo", H_organo},
+  {"OK_libero", H_libero},
+  {"OK_timone", H_timone}
 };
 
 
@@ -335,7 +348,7 @@ void game () {
     if(OK_valvole){
     sign_generatore = digitalRead(in_generatore);
     }
-    if (sign_generatore && !OK_generatore){
+    if ((sign_generatore || H_generatore) && !OK_generatore){
     for(int i=0; i <5 ;i++ ) Serial.println("generatoreDone");
     digitalWrite(luce_quarto, HIGH);
     //digitalWrite(luce_terzo, HIGH);
@@ -344,7 +357,7 @@ void game () {
     if(OK_generatore){
     sign_motore = digitalRead(in_motore);
     }
-    if (!sign_motore && !OK_motore){
+    if ((!sign_motore || H_motore) && !OK_motore){
     for(int i=0; i <5 ;i++ ) Serial.println("motoreDone");
     digitalWrite(M2, LOW); // open the door
     digitalWrite(M11, LOW);
@@ -374,7 +387,7 @@ void game () {
     if (OK_secondFloor){
     sign_croce = digitalRead(in_croce);
     }
-    if (!sign_croce && !OK_croce){
+    if ((!sign_croce || H_croce) && !OK_croce){
     for(int i=0; i <5 ;i++ ) Serial.println("croceDone");
     digitalWrite(M7, HIGH); //sblocca scatola piccola
     delay(20);
@@ -386,7 +399,7 @@ void game () {
     if(OK_croce) {
     sign_foto = digitalRead(in_foto);
     }
-    if (!sign_foto && !OK_foto){
+    if ((!sign_foto || H_foto) && !OK_foto){
     for(int i=0; i <5 ;i++ ) Serial.println("fotoDone");
     digitalWrite(stereo, HIGH);
     delay(3000);
@@ -397,7 +410,7 @@ void game () {
     if(OK_foto) {
     sign_stereo = digitalRead(in_stereo);
     }
-    if (!sign_stereo && !OK_stereo){
+    if ((!sign_stereo || H_stereo) && !OK_stereo){
     for(int i=0; i <5 ;i++ ) Serial.println("stereoDone");
     digitalWrite(culla, LOW);
     delay(4000);
@@ -409,7 +422,7 @@ void game () {
     if(OK_stereo) {
     sign_culla = digitalRead(in_culla);
     }
-    if (!sign_culla && !OK_culla){
+    if ((!sign_culla || H_culla) && !OK_culla){
     for(int i=0; i <5 ;i++ ) Serial.println("cullaDone");
     digitalWrite(M10, LOW); // sblocca cella timone
     delay(50);
@@ -420,7 +433,7 @@ void game () {
     if(OK_culla){
     sign_timone = digitalRead(in_timone);
     }
-    if (!sign_timone && !OK_timone) {
+    if ((!sign_timone || H_timone) && !OK_timone) {
     for(int i=0; i <5 ;i++ ) Serial.println("timoneDone");
     digitalWrite(M9, LOW); //sblocca la porta per gli orologi
     digitalWrite(orologi, HIGH);
@@ -431,7 +444,7 @@ void game () {
     if(OK_timone){
     sign_orologi = digitalRead(in_orologi);
     }
-    if (!sign_orologi && !OK_orologi) {
+    if ((!sign_orologi || H_orologi) && !OK_orologi) {
     for(int i=0; i <5 ;i++ ) Serial.println("orologiDone");
     digitalWrite(M5, LOW);// apre porta per il nano
     //digitalWrite(luce_primo, HIGH);
@@ -449,7 +462,7 @@ void game () {
     if(OK_orologi){
     sign_organo = digitalRead(in_interruttori);
     }
-    if (!sign_organo && !OK_organo) {
+    if ((!sign_organo || H_organo) && !OK_organo) {
     for(int i=0; i <5 ;i++ ) Serial.println("organoDone");
     digitalWrite(nano,LOW);
     //digitalWrite(luce_primo,LOW);
@@ -566,7 +579,7 @@ void seriale() {
     }
     int state = (input.substring(index+1,index+2)).toInt();
     digitalWrite(pin,state);
-	for (int k=0; k<13; k++){
+  for (int k=0; k<13; k++){
       if (input.substring(0,index) == okHints[k].str)
         okHints[k].OK = true;
     }
