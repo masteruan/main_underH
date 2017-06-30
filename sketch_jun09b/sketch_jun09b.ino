@@ -163,6 +163,7 @@ int M8 = 50;
 int M9 = 51;
 int M10 = 52;
 int M11 = 53;
+
 typedef struct {
   String str;
   int pin;
@@ -225,6 +226,7 @@ boolean H_orologi = false ;
 boolean H_organo = false ;
 boolean H_libero = false ;
 boolean H_timone =false ;
+
 ok okHints[13]={
   {"OK_valvole", H_valvole},
   {"OK_generatore", H_generatore},
@@ -308,10 +310,6 @@ void game () {
     OK_organo = false;
     OK_timone = false;
 
-    /*for(int i= 0; i<54; i++){
-      digitalWrite(i,LOW);
-    }
-    */
     digitalWrite(M1, HIGH);
     digitalWrite(M2, HIGH);
     digitalWrite(M3, HIGH);
@@ -326,19 +324,19 @@ void game () {
     digitalWrite(culla_gira, HIGH);
     // spegni luci
     digitalWrite(luce_primo, LOW);
-    digitalWrite(luce_secondo, LOW); 
+    digitalWrite(luce_secondo, LOW);
     digitalWrite(luce_terzo,LOW);
     digitalWrite(luce_quarto, LOW);
-    
+
     start_game = false;
     game_started = true;
-    for(int i=0; i <5 ;i++ ) Serial.println("gameStarted");
+    Serial.println("gameStarted");
   }
   else if (game_started){
     digitalWrite(valvole, HIGH);
     sign_valvole = digitalRead(in_valvole);
-    if (!sign_valvole && !OK_valvole){
-    for(int i=0; i <5 ;i++ ) Serial.println("valvoleDone");
+    if ((!sign_valvole || H_valvole) && !OK_valvole){
+    Serial.println("valvoleDone");
     digitalWrite(danger, HIGH); // switch off "DANGER"
     digitalWrite(motore, HIGH); // switch on motor
     digitalWrite(M1, LOW); // open the door
@@ -348,7 +346,7 @@ void game () {
     if(OK_valvole){
     sign_generatore = digitalRead(in_generatore);
     }
-    if ((sign_generatore || H_generatore) && !OK_generatore){
+    if ((!sign_generatore || H_generatore) && !OK_generatore){
     for(int i=0; i <5 ;i++ ) Serial.println("generatoreDone");
     digitalWrite(luce_quarto, HIGH);
     //digitalWrite(luce_terzo, HIGH);
@@ -375,13 +373,7 @@ void game () {
     digitalWrite(monaco, LOW);
     digitalWrite(candele, HIGH);
     OK_secondFloor = true;
-    // ###############################LAVORA!!
-    //    digitalWrite(M6, LOW); JAVA
-    // M6 HIGH
-    // M4 LOW
-    // luce primo low auto
     }
-
     // waiting for operator "_vent" & off tutti i caschi
     // waiting for operator unlock the BIG BOX (JOHN JAVA) _scatolaGrande
     if (OK_secondFloor){
@@ -438,7 +430,6 @@ void game () {
     digitalWrite(M9, LOW); //sblocca la porta per gli orologi
     digitalWrite(orologi, HIGH);
     OK_timone = true;
-
     }
     delay(1000);
     if(OK_timone){
@@ -453,9 +444,6 @@ void game () {
     delay(100);
     digitalWrite(organo, HIGH);
     delay(200);
-    //digitalWrite(organo, LOW);
-    //delay(200);
-    //digitalWrite(organo,HIGH);
     digitalWrite(pulsanti, HIGH);
     OK_orologi = true;
     }
@@ -465,7 +453,6 @@ void game () {
     if ((!sign_organo || H_organo) && !OK_organo) {
     for(int i=0; i <5 ;i++ ) Serial.println("organoDone");
     digitalWrite(nano,LOW);
-    //digitalWrite(luce_primo,LOW);
     digitalWrite(luce_secondo, HIGH); // accendi la luce finale
     delay(10000);
     digitalWrite(mano, HIGH);
@@ -474,14 +461,6 @@ void game () {
     if(OK_organo){
     //reset all
     }
-/*
-  sign_start = digitalRead(in_start);
-  if (!read_start && !sign_start){
-    start_game = true;
-    read_start = true;
-    sign_start = true;
-  }
-  */
   }
 }
 
@@ -569,6 +548,7 @@ void serialEvent() {
     }
   }
 }
+
 void seriale() {
   int index = input.indexOf(',');
   int pin;
@@ -584,6 +564,7 @@ void seriale() {
         okHints[k].OK = true;
     }
   }
+
   // animations
   else if (input == "_vent\n")
   {
@@ -615,7 +596,6 @@ void seriale() {
   else if (input == "_scatolaGrande\n" && !scatolaGrande){
   scatolaGrande = true;
   digitalWrite(M8, LOW);
-  //Serial.println("The big box opened!");
   }
   // preparation
   //(remember the big box that have the "scrocco" not electromagnets)
