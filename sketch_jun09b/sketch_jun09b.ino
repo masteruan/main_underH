@@ -1,6 +1,8 @@
 /*
  Main sottoterra
- 2 Giugno 2017
+ 7 Luglio 2017
+Lavoro su m3 local
+
 OUTPUT
 Candele 29 -- M4  46
 Timone 28  -- M5  47
@@ -46,9 +48,7 @@ Send to serial
 
 // Libraries
 #include "Arduino.h"
-#include "SoftwareSerial.h"
 #include "DFRobotDFPlayerMini.h"
-SoftwareSerial mySoftwareSerial(7, 8); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 
 // Variables
@@ -264,19 +264,19 @@ void setup() {
     }
 
     // Start up serial connection
-    mySoftwareSerial.begin(115200); //default 9600
+    Serial1.begin(9600); //default 9600
     Serial.begin(9600); //default 115200
     input.reserve(200);
 
     // Start mp3 player
-    if (!myDFPlayer.begin(mySoftwareSerial)) {  //Use softwareSerial to communicate with mp3.
+    if (!myDFPlayer.begin(Serial1)) {  //Use softwareSerial to communicate with mp3.
       Serial.println(F("Unable to begin:"));
       Serial.println(F("1.Please recheck the connection!"));
       Serial.println(F("2.Please insert the SD card!"));
       //while(true);
     }
     myDFPlayer.volume(30); // min = 0 max = 30
-    myDFPlayer.loop(1);
+    myDFPlayer.play(1);
 
     Serial.println("################");
     Serial.println("You are Welcome!");
