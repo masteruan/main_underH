@@ -1,7 +1,8 @@
 /*
  Main sottoterra
- 7 Luglio 2017
-Lavoro su m3 local
+ 17 Luglio 2017
+ v 3.3
+ mp3 local integrated
 
 OUTPUT
 Candele 29 -- M4  46
@@ -44,6 +45,9 @@ Send to serial
 "_secondFloor" to switch on the second floor
 "_vent" for the animation of ventilator
 "_nano" for the animation of dwarf
+"_special1" for audio special in cross (mouses)
+"_special2" for audio special in timone (baby)
+"_special3" for audio special in timone (baby2)
 */
 
 // Libraries
@@ -275,8 +279,23 @@ void setup() {
       Serial.println(F("2.Please insert the SD card!"));
       //while(true);
     }
+    /* Debug Audio Special
+    Serial.println("Play special sound");
     myDFPlayer.volume(30); // min = 0 max = 30
-    myDFPlayer.play(1);
+    for (int i = 0; i < 9; i++) {
+      Serial.print("Play no. ");
+      Serial.println(i);
+      myDFPlayer.play(i);
+      delay(5000);
+    }
+    Serial.println("change special sound");
+    digitalWrite(4, 1);
+    digitalWrite(5, 1);
+    myDFPlayer.play(2);
+    delay(5000);
+    digitalWrite(4, 0);
+    digitalWrite(5, 0);
+    */
 
     Serial.println("################");
     Serial.println("You are Welcome!");
@@ -418,6 +437,12 @@ void game () {
     for(int i=0; i <5 ;i++ ) Serial.println("cullaDone");
     digitalWrite(M10, LOW); // sblocca cella timone
     delay(50);
+    // special sound timone
+    digitalWrite(4, 1);
+    digitalWrite(5, 1);
+    myDFPlayer.volume(30); // min = 0 max = 30
+    myDFPlayer.play(3);
+    delay(100);
     digitalWrite(timone, HIGH);
     digitalWrite(M7, LOW); //rilascia la calamita scatola piccola
     OK_culla = true;
@@ -596,6 +621,12 @@ void seriale() {
   else if (input == "_scatolaGrande\n" && !scatolaGrande){
   scatolaGrande = true;
   digitalWrite(M8, LOW);
+  // Special Audio cross
+  digitalWrite(4, 0);
+  digitalWrite(5, 0);
+  myDFPlayer.volume(20); // min = 0 max = 30
+  myDFPlayer.play(7);
+  delay(50);
   }
   // preparation
   //(remember the big box that have the "scrocco" not electromagnets)
@@ -671,6 +702,31 @@ void seriale() {
   lettura();
   }
 
+  // special sound
+  else if (input == "_special1\n"){
+    // change on cross audio
+    digitalWrite(4, 0);
+    digitalWrite(5, 0);
+    myDFPlayer.volume(30); // min = 0 max = 30
+    myDFPlayer.play(8);
+    delay(5000);
+    }
+  else if (input == "_special2\n"){
+    // change on timone audio
+    digitalWrite(4, 1);
+    digitalWrite(5, 1);
+    myDFPlayer.volume(30);
+    myDFPlayer.play(5);
+    delay(5000);
+  }
+  else if (input == "_special3\n"){
+    // change on timone audio
+    digitalWrite(4, 1);
+    digitalWrite(5, 1);
+    myDFPlayer.volume(30);
+    myDFPlayer.play(3);
+    delay(5000);
+  }
   // test serial
   else if (input == "_test_on\n")
   {
