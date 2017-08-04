@@ -3,6 +3,7 @@
  28 Luglio 2017
  v 3.4
  Now the gamemaster can resolves the game. (HV,HG...)
+ Now the "sciura" is under relay
 
 OUTPUT
 Candele 29 -- M4  46
@@ -25,8 +26,11 @@ Culla 30          --  Culla (gira) 6
 --                --
 RELAY PICCOLI
 audio
-ralay1 4  --  relay3 3
-relay2 5  --  relay4 2
+ralay1 pin 4
+relay2 pin 5
+
+relay3 pin 3 Libero
+relay4 pin 2 Sciura
 RELAY 220 V
 
 LUCI
@@ -164,7 +168,7 @@ int timone = 28;
 int candele = 29;
 int culla = 30;
 int culla_gira = 6;
-
+int sciura = 2;
 int foto = 32;
 int stereo = 33;
 
@@ -199,11 +203,12 @@ typedef struct {
   String str;
   int pin;
 } output;
-output outputs[35]={
+output outputs[36]={
   {"valvole", valvole},
   {"danger", danger},
   {"mano", mano},
   {"motore", motore},
+  {"sciura", sciura},
   {"croce", croce}, //default 26
   {"monaco", monaco},
   {"timone", timone},
@@ -348,6 +353,9 @@ void game () {
     digitalWrite(M11, HIGH);
     digitalWrite(croce, HIGH);
     digitalWrite(culla_gira, HIGH);
+    delay(50);
+    digitalWrite(sciura, LOW);
+
     // spegni luci
     digitalWrite(luce_primo, LOW);
     delay(50);
@@ -382,6 +390,7 @@ void game () {
     if ((sign_generatore || H_generatore) && !OK_generatore){
       for(int i=0; i <5 ;i++ ) {Serial.println("generatoreDone");}
       digitalWrite(luce_quarto, HIGH);
+      digitalWrite(luce_terzo, HIGH);
       OK_generatore = true;
     }
     if(OK_generatore){
@@ -400,7 +409,12 @@ void game () {
     if (second_floor && !OK_secondFloor){
       digitalWrite(M11, HIGH); //cella croce
       delay(200);
+      digitalWrite(luce_terzo, LOW);
+      delay(50);
+      digitalWrite(luce_quarto, LOW);
+      delay(20);
       digitalWrite(monaco, LOW);
+      delay(50);
       digitalWrite(candele, HIGH);
       OK_secondFloor = true;
     }
@@ -506,6 +520,9 @@ void game () {
       delay(50);
       digitalWrite(luce_primo, LOW);
       digitalWrite(luce_secondo, HIGH); // accendi la luce finale
+      delay(50);
+      digitalWrite(luce_terzo, LOW);
+      digitalWrite(luce_quarto, LOW);
       delay(10000);
       digitalWrite(mano, HIGH);
       OK_organo = true;
@@ -605,7 +622,7 @@ void seriale() {
   int index = input.indexOf(',');
   int pin;
   if(index != -1){
-    for (int k=0; k<35; k++){
+    for (int k=0; k<36; k++){
       if (input.substring(0,index) == outputs[k].str){
         pin = outputs[k].pin;
       }
@@ -663,6 +680,8 @@ void seriale() {
   delay(200);
   digitalWrite(ventilatore, LOW);
   digitalWrite(luce_primo, HIGH);
+  delay(50);
+  digitalWrite(sciura, HIGH);
   }
   else if (input == "_nano\n"){
     digitalWrite(nano, LOW);
@@ -712,6 +731,7 @@ void seriale() {
   digitalWrite(monaco, HIGH);
   digitalWrite(timone, HIGH);
   digitalWrite(culla_gira, HIGH);
+  digitalWrite(sciura, HIGH); // on sciura
   // switch on all the lights
   digitalWrite(luce_primo, HIGH);
   delay(200);
