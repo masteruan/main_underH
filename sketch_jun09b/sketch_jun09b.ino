@@ -1,6 +1,6 @@
 /*
  Main sottoterra
- 28 Luglio 2017
+ 4 Agosto 2017
  v 3.4
  Now the gamemaster can resolves the game. (HV,HG...)
  Now the "sciura" is under relay
@@ -389,8 +389,8 @@ void game () {
     }
     if ((sign_generatore || H_generatore) && !OK_generatore){
       for(int i=0; i <5 ;i++ ) {Serial.println("generatoreDone");}
-      digitalWrite(luce_quarto, HIGH);
-      digitalWrite(luce_terzo, HIGH);
+      digitalWrite(luce_quarto, HIGH); // luce orologio scala valvole
+      digitalWrite(luce_terzo, HIGH); // luce croce sala grande
       OK_generatore = true;
     }
     if(OK_generatore){
@@ -423,13 +423,6 @@ void game () {
     // waiting for operator unlock the BIG BOX (JAVA) _scatolaGrande
     if (OK_secondFloor){
       sign_croce = digitalRead(in_croce);
-      delay(50);
-      digitalWrite(luce_primo, LOW);
-      digitalWrite(luce_secondo, LOW);
-      delay(50);
-      digitalWrite(luce_terzo, LOW);
-      digitalWrite(luce_quarto, HIGH);
-
     }
     if ((!sign_croce || H_croce) && !OK_croce){
       for(int i=0; i <5 ;i++ ){Serial.println("croceDone");}
@@ -439,12 +432,8 @@ void game () {
       delay(20);
       digitalWrite(foto, HIGH);
       delay(50);
-      digitalWrite(luce_primo, LOW);
-      digitalWrite(luce_secondo, LOW);
-      delay(50);
-      digitalWrite(luce_terzo, HIGH);
-      digitalWrite(luce_quarto, LOW);
-
+      digitalWrite(luce_primo, HIGH); // luce st bambini
+      digitalWrite(luce_terzo, HIGH); // luce sala grande
       OK_croce = true;
     }
     if(OK_croce) {
@@ -452,8 +441,6 @@ void game () {
     }
     if ((!sign_foto || H_foto) && !OK_foto){
       for(int i=0; i <5 ;i++ ){Serial.println("fotoDone");}
-      digitalWrite(luce_primo, HIGH);
-      delay(50);
       digitalWrite(stereo, HIGH);
       delay(3000);
       digitalWrite(culla, HIGH); // accende la culla
@@ -490,7 +477,7 @@ void game () {
       digitalWrite(M7, LOW); //rilascia la calamita scatola piccola
       delay(3000);
       myDFPlayer.play(3);
-      digitalWrite(luce_primo, LOW);
+      digitalWrite(luce_primo, LOW); // luce stanza bambini
       OK_culla = true;
     }
     if(OK_culla){
@@ -501,7 +488,7 @@ void game () {
       for(int i=0; i <5 ;i++ ){Serial.println("timoneDone");}
     digitalWrite(M9, LOW); //sblocca la porta per gli orologi
     digitalWrite(orologi, HIGH);
-    digitalWrite(luce_quarto, HIGH);
+    digitalWrite(luce_quarto, HIGH); //luce orologi
     OK_timone = true;
     }
     delay(1000);
@@ -512,8 +499,9 @@ void game () {
       for(int i=0; i <5 ;i++ ){Serial.println("orologiDone");}
       digitalWrite(M5, LOW);// apre porta per il nano
       digitalWrite(luce_quarto, LOW);
-      delay(6000);
+      delay(2000);
       digitalWrite(luce_primo, HIGH);
+      delay(100);
       digitalWrite(nano, HIGH);
       delay(100);
       digitalWrite(organo, HIGH);
@@ -532,13 +520,14 @@ void game () {
       digitalWrite(luce_secondo, HIGH); // accendi la luce finale
       delay(50);
       digitalWrite(luce_terzo, LOW);
-      digitalWrite(luce_quarto, LOW);
-      delay(10000);
+      delay(5000);
       digitalWrite(mano, HIGH);
       OK_organo = true;
     }
     if(OK_organo){
-    for (int i = 0; i<5; i++){Serial.println("THE END");}
+
+    for (int i = 0; i<5; i++){Serial.println("THE END"); delay(1000);}
+
     }
   }
 }
@@ -745,7 +734,7 @@ void seriale() {
   digitalWrite(timone, HIGH);
   digitalWrite(culla_gira, HIGH);
   delay(50);
-  digitalWrite(sciura, HIGH); // on sciura
+  digitalWrite(sciura, LOW); // on sciura
   // switch on all the lights
   digitalWrite(luce_primo, HIGH);
   delay(200);
