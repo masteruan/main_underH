@@ -62,7 +62,7 @@ Send to serial
 "_preparation" to close all the doors and switch on all the lights
 "_startGame" to start the game
 "_secondFloor" to switch on the second floor
-"_vent" for the animation of ventilator
+"_vent" for the animation of ventilator and sciura ON
 "_nano" for the animation of dwarf
 "_special1" for audio special in cross (mouses)
 "_special2" for audio special in timone (baby)
@@ -423,6 +423,13 @@ void game () {
     // waiting for operator unlock the BIG BOX (JAVA) _scatolaGrande
     if (OK_secondFloor){
       sign_croce = digitalRead(in_croce);
+      delay(50);
+      digitalWrite(luce_primo, LOW);
+      digitalWrite(luce_secondo, LOW);
+      delay(50);
+      digitalWrite(luce_terzo, LOW);
+      digitalWrite(luce_quarto, HIGH);
+
     }
     if ((!sign_croce || H_croce) && !OK_croce){
       for(int i=0; i <5 ;i++ ){Serial.println("croceDone");}
@@ -432,9 +439,12 @@ void game () {
       delay(20);
       digitalWrite(foto, HIGH);
       delay(50);
-      digitalWrite(luce_quarto, LOW);
+      digitalWrite(luce_primo, LOW);
+      digitalWrite(luce_secondo, LOW);
       delay(50);
       digitalWrite(luce_terzo, HIGH);
+      digitalWrite(luce_quarto, LOW);
+
       OK_croce = true;
     }
     if(OK_croce) {
@@ -528,7 +538,7 @@ void game () {
       OK_organo = true;
     }
     if(OK_organo){
-    Serial.println("THE END");
+    for (int i = 0; i<5; i++){Serial.println("THE END");}
     }
   }
 }
@@ -721,16 +731,20 @@ void seriale() {
   digitalWrite(M1, HIGH);
   digitalWrite(M2, HIGH);
   digitalWrite(M3, HIGH);
+  delay(50);
   digitalWrite(M4, HIGH);
   digitalWrite(M5, HIGH);
   digitalWrite(M6, HIGH);
   digitalWrite(M7, LOW); // scatola piccola
+  delay(50);
   digitalWrite(M8, HIGH);
   digitalWrite(M9, HIGH);
   digitalWrite(M10, HIGH);
+  delay(50);
   digitalWrite(monaco, HIGH);
   digitalWrite(timone, HIGH);
   digitalWrite(culla_gira, HIGH);
+  delay(50);
   digitalWrite(sciura, HIGH); // on sciura
   // switch on all the lights
   digitalWrite(luce_primo, HIGH);
@@ -740,11 +754,10 @@ void seriale() {
   digitalWrite(luce_terzo, HIGH);
   delay(200);
   digitalWrite(luce_quarto, HIGH);
-  delay(200);
+  delay(1000);
   digitalWrite(organo_start,HIGH);
   delay(2000);
   digitalWrite(organo_start,LOW);
-
   }
   // open all
   else if (input == "_openAll\n"){
