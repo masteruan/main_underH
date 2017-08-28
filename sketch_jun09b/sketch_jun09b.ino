@@ -4,6 +4,7 @@
  v 3.4
  Now the gamemaster can resolves the game. (HV,HG...)
  Now the "sciura" is under relay
+ Now the operator can move "scuira"
 
 OUTPUT
 Candele 29 -- M4  46
@@ -29,7 +30,7 @@ audio
 ralay1 pin 4
 relay2 pin 5
 
-relay3 pin 3 Libero
+relay3 pin 3 Muove Sciura
 relay4 pin 2 Sciura
 RELAY 220 V
 
@@ -169,6 +170,7 @@ int candele = 29;
 int culla = 30;
 int culla_gira = 6;
 int sciura = 2;
+int moveSciura = 3;
 int foto = 32;
 int stereo = 33;
 
@@ -203,12 +205,13 @@ typedef struct {
   String str;
   int pin;
 } output;
-output outputs[36]={
+output outputs[37]={
   {"valvole", valvole},
   {"danger", danger},
   {"mano", mano},
   {"motore", motore},
   {"sciura", sciura},
+  {"moveSciura", moveSciura},
   {"croce", croce}, //default 26
   {"monaco", monaco},
   {"timone", timone},
