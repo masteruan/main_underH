@@ -713,6 +713,13 @@ void seriale() {
   myDFPlayer.play(7);
   delay(50);
   }
+
+  // move sciura
+  else if (input == "_moveSciura\n"){
+    digitalWrite(moveSciura, HIGH);
+    delay(100);
+    digitalWrite(moveSciura, LOW);
+  }
   // preparation
   //(remember the big box that have the "scrocco" not electromagnets)
   else if (input == "_preparation\n" && !preparation){
