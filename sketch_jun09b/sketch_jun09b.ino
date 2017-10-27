@@ -1,10 +1,12 @@
 /*
  Main sottoterra
- 4 Agosto 2017
+ 27 Ottobre 2017
  v 3.4
+
  Now the gamemaster can resolves the game. (HV,HG...)
  Now the "sciura" is under relay
  Now the operator can move "scuira"
+ Now the last key has a box
 
 OUTPUT
 Candele 29 -- M4  46
@@ -358,6 +360,7 @@ void game () {
     digitalWrite(culla_gira, HIGH);
     delay(50);
     digitalWrite(sciura, LOW);
+    digitalWrite(mano, HIGH);
 
     // spegni luci
     digitalWrite(luce_primo, LOW);
@@ -523,8 +526,8 @@ void game () {
       digitalWrite(luce_secondo, HIGH); // accendi la luce finale
       delay(50);
       digitalWrite(luce_terzo, LOW);
-      delay(5000);
-      digitalWrite(mano, HIGH);
+      delay(3000);
+      digitalWrite(mano, LOW);
       OK_organo = true;
     }
     if(OK_organo){
@@ -745,6 +748,8 @@ void seriale() {
   digitalWrite(culla_gira, HIGH);
   delay(50);
   digitalWrite(sciura, LOW); // on sciura
+  digitalWrite(mano, HIGH); // close last key box
+
   // switch on all the lights
   digitalWrite(luce_primo, HIGH);
   delay(200);
